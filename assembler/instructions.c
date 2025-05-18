@@ -254,3 +254,5 @@ struct ASM_Instruction ASM_instructions[] = {
     {"CP",   "n", {0xFE}, 1},
     {"RST",  "38H", {0xFF},1}
 };
+
+int ASM_Instructions_count = sizeof(ASM_instructions) / sizeof(ASM_instructions[0]);
