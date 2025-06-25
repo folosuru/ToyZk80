@@ -1,0 +1,90 @@
+#include<stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#include "assembler.h"
+
+
+
+int main(int argc, char *argv[]){
+
+    FILE* file;
+    struct Command_flags flags;
+    flags.create_addressJump_label = false;
+    flags.start_address = 0x8000;
+
+    // 0=> assemble
+    // 1=> disassemble
+    int mode = 0;
+
+    const char* filename = NULL;
+    const char* output_name = NULL;
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp("--assemble", argv[i]) == 0) {
+            mode = 0;
+            continue;
+        }
+        if (strcmp("--disassemble", argv[i]) == 0) {
+            mode = 1;
+            continue;
+        }
+        if (strcmp("--label", argv[i]) == 0) {
+            flags.create_addressJump_label  = true;
+            continue;
+        }
+        if (strcmp("-o", argv[i]) == 0) {
+            if (i+1 < argc) {
+                i++;
+                output_name = argv[i];
+            }
+            continue;
+        }
+        if (strcmp("-start", argv[i]) == 0) {
+            if (i+1 < argc) {
+                i++;
+                sscanf_s(argv[i], "%x", &flags.start_address);
+            }
+            continue;
+        }
+        filename = argv[i];
+    }
+    if (filename == NULL) {
+        printf("no input");
+        exit(0);
+    }
+
+    fopen_s(&file, filename, "r");
+    if (output_name != NULL) {
+        fopen_s(&flags.out, output_name, "w");
+    } else {
+        flags.out = stdout;
+    }
+
+    if (file == 0) {
+        fprintf(stderr, "file load err");
+        return 0;
+    }
+    if (fseek(file, 0, SEEK_END) == -1) {
+        fprintf(stderr, "file load err");
+        return 0;
+    }
+    size_t size = ftell(file);
+    if (fseek(file, 0, SEEK_SET) == -1) {
+        fprintf(stderr, "file load err");
+        return 0;
+    }
+    char *buf = calloc(1, size + 2);
+    fread(buf, size, 1, file);
+    fclose(file);
+    if (size == 0 || buf[size - 1] != '\n') {
+        buf[size++] = '\n';
+    }
+
+    if (mode == 0) {
+        print_BufferArea(assemble(buf, &flags), flags.out);
+    } else {
+        disassemble(buf, size, &flags);
+    }
+    if (output_name != NULL) fclose(flags.out);
+}

@@ -1,9 +1,12 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
+#include <stdio.h>
+#include <stdbool.h>
+
 #include "instructions.h"
 
 typedef struct BufferArea_ {
-    char* buffer;
+    unsigned char* buffer;
     int size;
 } BufferArea;
 
@@ -14,12 +17,37 @@ struct seeking_text {
 
 struct unresolved_label {
     const char* name;
-    const char* name_len;
+    int name_len;
+    unsigned char* write_position;
+    unsigned char* next_instruction;
+
+    enum {
+        unresolved_label_type_relative,
+        unresolved_label_type_absolute
+    } type;
 };
 
-const char* seek_instruction(struct seeking_text* current, int* const len_out);
-BufferArea assemble(char* source);
-ASM_Opcode *tryCreateOperand(const char* name, int name_len,
-                             struct seeking_text* text, const struct ASM_Instruction* instruction);
-ASM_Opcode* findInstruction(struct seeking_text* text);
+struct defined_label {
+    const char* name;
+    int name_len;
+    const unsigned char* position;
+};
+
+
+struct Command_flags {
+    FILE* out;
+    int start_address;
+    bool create_addressJump_label;
+};
+
+BufferArea assemble(const char* source, struct Command_flags* flag);
+void disassemble(const char* source, int source_len, struct Command_flags* flag);
+
+int getOpcodeSize(const struct ASM_Instruction* instruction);
+void print_BufferArea(BufferArea area, FILE* out);
+_Bool skip_whitespace(struct seeking_text* text);
+_Bool skip_return(struct seeking_text* text);
+int resolveLabel(struct unresolved_label* find_label, struct defined_label (*definedLabel)[], int definedLabel_count);
+
+
 #endif  // ASSEMBLER_H
