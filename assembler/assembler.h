@@ -1,7 +1,7 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "instructions.h"
 
@@ -33,7 +33,6 @@ struct defined_label {
     const unsigned char* position;
 };
 
-
 struct Command_flags {
     FILE* out;
     int start_address;
@@ -48,6 +47,5 @@ void print_BufferArea(BufferArea area, FILE* out);
 _Bool skip_whitespace(struct seeking_text* text);
 _Bool skip_return(struct seeking_text* text);
 int resolveLabel(struct unresolved_label* find_label, struct defined_label (*definedLabel)[], int definedLabel_count);
-
 
 #endif  // ASSEMBLER_H

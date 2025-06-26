@@ -1,5 +1,6 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
+
 enum OperandData_Type {
     data_none,
     data_n,
@@ -9,10 +10,10 @@ enum OperandData_Type {
 };
 
 struct ASM_Instruction {
-    const char *instruction; // "LD"
-    const char *operand;  //  "IY,nn"
-    unsigned char OpCode[4]; // 0xFD 0x21
-    char OpCodeCount;  // 2
+    const char* instruction;  // "LD"
+    const char* operand;      //  "IY,nn"
+    unsigned char OpCode[4];  // 0xFD 0x21
+    char OpCodeCount;         // 2
 
     enum OperandData_Type data[4];
 };
@@ -32,7 +33,7 @@ struct ASM_Label_Data {
  *
  * delimiter: sore igai
  */
-extern  struct ASM_Instruction ASM_instructions[];
+extern struct ASM_Instruction ASM_instructions[];
 extern int ASM_Instructions_count;
 
 struct Opcode_data {
@@ -44,17 +45,18 @@ struct Opcode_data {
         Opcode_data_offset,
 
     } type;
+
     union {
         signed char s1bit_data;
         int data;
         struct ASM_Label_Data label;
     };
 };
+
 typedef struct {
     const struct ASM_Instruction* instruction;
     struct Opcode_data data[6];
     int data_len;
 } ASM_Opcode;
 
-
-#endif //INSTRUCTIONS_H
+#endif  // INSTRUCTIONS_H

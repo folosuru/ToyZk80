@@ -1,19 +1,18 @@
-#include "assembler.h"
-#include <ctype.h>
+#include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdarg.h>
+
+#include "assembler.h"
 #include "instructions.h"
 
+#define ARRAY_SIZEOF(arr) sizeof(arr) / sizeof(arr[0])
 
-bool read_operand_code(const unsigned char* data_start, int* data_pos, int data_len,
-                       ASM_Opcode* result) {
+bool read_operand_code(const unsigned char* data_start, int* data_pos, int data_len, ASM_Opcode* result) {
     const struct ASM_Instruction* instruction = result->instruction;
 
     int start_data_pos = *data_pos;
-    for (int i=0; i < sizeof(instruction->data)/sizeof(instruction->data[0]); i++) {
+    for (int i = 0; i < ARRAY_SIZEOF(instruction->data); i++) {
         if (instruction->data[i] == data_none) {
             break;
         }
@@ -25,24 +24,22 @@ bool read_operand_code(const unsigned char* data_start, int* data_pos, int data_
         result->data_len++;
         if (instruction->data[i] == data_n) {
             result->data[i].type = Opcode_data_1byte;
-            result->data[i].data = *(data_start+(*data_pos));
+            result->data[i].data = *(data_start + (*data_pos));
             (*data_pos)++;
         } else if (instruction->data[i] == data_nn) {
-            if (data_len <= (*data_pos) +1) {
+            if (data_len <= (*data_pos) + 1) {
                 *data_pos = start_data_pos;
                 return false;
             }
 
             result->data[i].type = Opcode_data_2byte;
-            result->data[i].data = *(data_start+(*data_pos)) | (*(data_start+(*data_pos+1)) << 8);
+            result->data[i].data = *(data_start + (*data_pos)) | (*(data_start + (*data_pos + 1)) << 8);
             (*data_pos) += 2;
 
         } else if (instruction->data[i] == data_e) {
             result->data[i].type = Opcode_data_offset;
-            result->data[i].s1bit_data = *(signed char*)(data_start+(*data_pos));
+            result->data[i].s1bit_data = *(signed char*)(data_start + (*data_pos));
             (*data_pos)++;
-        } else {
-            ;
         }
     }
     return true;
@@ -50,19 +47,18 @@ bool read_operand_code(const unsigned char* data_start, int* data_pos, int data_
 
 void find_instruction_by_code(const unsigned char* data_start, int* data_pos, int data_len, ASM_Opcode* result) {
     int pos_start = *data_pos;
-    for (int i=0; i < ASM_Instructions_count; i++) {
-        struct ASM_Instruction *instruction = &ASM_instructions[i];
+    for (int i = 0; i < ASM_Instructions_count; i++) {
+        struct ASM_Instruction* instruction = &ASM_instructions[i];
 
-        if (instruction->OpCode[0] != *(data_start+(*data_pos))) {
+        if (instruction->OpCode[0] != *(data_start + (*data_pos))) {
             continue;
         }
         *data_pos = pos_start;
 
         (*data_pos)++;
         bool do_continue = false;
-        for (int j=1; j < instruction->OpCodeCount; j++) {
-            if ((*data_pos) == data_len ||
-                instruction->OpCode[j] != *(data_start+(*data_pos))) {
+        for (int j = 1; j < instruction->OpCodeCount; j++) {
+            if ((*data_pos) == data_len || instruction->OpCode[j] != *(data_start + (*data_pos))) {
                 do_continue = true;
                 break;
             }
@@ -80,30 +76,29 @@ void find_instruction_by_code(const unsigned char* data_start, int* data_pos, in
     *data_pos = pos_start;
 }
 
-static int compare_int(const void *a, const void *b) {
+static int compare_int(const void* a, const void* b) {
     return *(int*)a - *(int*)b;
 }
 
-static void append_label_list(int (*append_list)[], int *list_current, int add) {
-        bool label_found = false;
-        for (int j=0; j < *list_current; j++) {
-            if ((*append_list)[j] == add) {
-                label_found = true;
-                return;
-            }
+static void append_label_list(int (*append_list)[], int* list_current, int add) {
+    for (int j = 0; j < *list_current; j++) {
+        if ((*append_list)[j] == add) {
+            return;
         }
-        (*append_list)[*list_current] = add;
-        (*list_current)++;
+    }
+    (*append_list)[*list_current] = add;
+    (*list_current)++;
 }
-
 
 void disassemble(const char* source, int source_len, struct Command_flags* flags) {
     FILE* out = flags->out;
     struct seeking_text seek_src = {source, source};
     unsigned char* data_area;
     int data_len = 0;
-    data_area = malloc(source_len/2);
-    if (data_area == NULL) {exit(0);}
+    data_area = malloc(source_len / 2);
+    if (data_area == NULL) {
+        exit(0);
+    }
     skip_whitespace(&seek_src);
     skip_return(&seek_src);
 
@@ -130,22 +125,22 @@ void disassemble(const char* source, int source_len, struct Command_flags* flags
         find_instruction_by_code(data_area, &seek_pos, data_len, &opcode_list[opcode_list_cnt]);
         program_pos += getOpcodeSize(opcode_list[opcode_list_cnt].instruction);
 
-        for (int i=0; i < sizeof(opcode_list[opcode_list_cnt].data)/sizeof(opcode_list[opcode_list_cnt].data[0]); i++) {
+        for (int i = 0; i < ARRAY_SIZEOF(opcode_list[opcode_list_cnt].data); i++) {
             if (opcode_list[opcode_list_cnt].data[i].type == Opcode_data_offset) {
                 int label_pos = program_pos + opcode_list[opcode_list_cnt].data[i].s1bit_data;
-                if (unnamed_label_pos_cnt < sizeof(unnamed_label_pos)/sizeof(unnamed_label_pos[0])) {
+                if (unnamed_label_pos_cnt < ARRAY_SIZEOF(unnamed_label_pos)) {
                     append_label_list(&unnamed_label_pos, &unnamed_label_pos_cnt, label_pos);
                 } else {
                     fprintf(stderr, "label is too many");
                 }
-            } else if (opcode_list[opcode_list_cnt].data[i].type == Opcode_data_2byte && flags->create_addressJump_label) {
-                if (unnamed_label_pos_cnt < sizeof(unnamed_label_pos)/sizeof(unnamed_label_pos[0])) {
+            } else if (opcode_list[opcode_list_cnt].data[i].type == Opcode_data_2byte &&
+                       flags->create_addressJump_label) {
+                if (unnamed_label_pos_cnt < ARRAY_SIZEOF(unnamed_label_pos)) {
                     int may_addr = opcode_list[opcode_list_cnt].data[i].data;
                     if (flags->start_address <= may_addr && may_addr <= flags->start_address + data_len) {
                         append_label_list(&unnamed_label_pos, &unnamed_label_pos_cnt, may_addr);
                     }
                 } else {
-
                     fprintf(stderr, "label is too many");
                 }
             }
@@ -162,7 +157,7 @@ void disassemble(const char* source, int source_len, struct Command_flags* flags
             fprintf(out, "LABEL_%d: \n", current_label_index);
             if (current_label_index < unnamed_label_pos_cnt) current_label_index++;
         }
-        ASM_Opcode *current = &opcode_list[i];
+        ASM_Opcode* current = &opcode_list[i];
 
         program_pos += getOpcodeSize(current->instruction);
 
@@ -182,7 +177,7 @@ void disassemble(const char* source, int source_len, struct Command_flags* flags
                         if ((flags->start_address <= value && value <= flags->start_address + data_len &&
                              flags->create_addressJump_label)) {
                             int found_label_number = -1;
-                            for (int j=0; j < unnamed_label_pos_cnt; j++) {
+                            for (int j = 0; j < unnamed_label_pos_cnt; j++) {
                                 if (unnamed_label_pos[j] == value) {
                                     found_label_number = j;
                                     break;
@@ -198,15 +193,16 @@ void disassemble(const char* source, int source_len, struct Command_flags* flags
                         current_operand_char += 2;
                         continue;
                     } else {
-                        fprintf(out,"%02xH", (current->data[current_operand_data_count].data));
+                        fprintf(out, "%02xH", (current->data[current_operand_data_count].data));
                         current_operand_char++;
                         continue;
                     }
                 }
                 if (*(current_operand_char) == 'e') {
                     int found_label_number = -1;
-                    for (int j=0; j < unnamed_label_pos_cnt; j++) {
-                        if (unnamed_label_pos[j] == current->data[current_operand_data_count].s1bit_data + program_pos) {
+                    for (int j = 0; j < unnamed_label_pos_cnt; j++) {
+                        if (unnamed_label_pos[j] ==
+                            current->data[current_operand_data_count].s1bit_data + program_pos) {
                             found_label_number = j;
                             break;
                         }

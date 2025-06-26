@@ -1,18 +1,20 @@
 #include "assembler.h"
+
 #include <ctype.h>
+#include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <stdarg.h>
+
 #include "instructions.h"
+#define ARRAY_SIZEOF(arr) sizeof(arr) / sizeof(arr[0])
 
 static const char* seek_instruction(struct seeking_text* seek_text, int* len_out);
-static ASM_Opcode *tryCreateOperand(const char* name, int name_len,
-                             struct seeking_text* text, const struct ASM_Instruction* instruction);
+static ASM_Opcode* tryCreateOperand(const char* name, int name_len, struct seeking_text* text,
+                                    const struct ASM_Instruction* instruction);
 static ASM_Opcode* findInstruction(struct seeking_text* text);
 static int parse_number(struct seeking_text* text);
-
 
 struct text_span_info {
     const char* line_start;
@@ -22,7 +24,7 @@ struct text_span_info {
 };
 
 struct text_span_info get_line_info(const char* text_begin, const char* current) {
-    struct text_span_info result = {text_begin, 0, 1,1};
+    struct text_span_info result = {text_begin, 0, 1, 1};
     const char* iter = text_begin;
     while (iter < current && *iter != '\0') {
         if (*iter == '\n') {
@@ -45,11 +47,11 @@ struct text_span_info get_line_info(const char* text_begin, const char* current)
 
 void show_errormessage(struct seeking_text* seek_text, const char* message, ...) {
     struct text_span_info line = get_line_info(seek_text->start, seek_text->current);
-    fprintf(stderr,"line %d:%d: ", line.line, line.line_pos-1);
+    fprintf(stderr, "line %d:%d: ", line.line, line.line_pos - 1);
     va_list ap;
     va_start(ap, message);
     vfprintf(stderr, message, ap);
-    fprintf(stderr, "\n%.*s\n%*.s^\n", line.line_len , line.line_start, line.line_pos-1, "" );
+    fprintf(stderr, "\n%.*s\n%*.s^\n", line.line_len, line.line_start, line.line_pos - 1, "");
 }
 
 // return: instruction start pos
@@ -68,14 +70,14 @@ static const char* seek_instruction(struct seeking_text* seek_text, int* const l
         if (*seek_text->current == ' ' || *seek_text->current == '\n' || *seek_text->current == '\r') {
             return word_start;
         }
-            if ('A' <= *seek_text->current && *seek_text->current <= 'Z') {
-                *len_out += 1;
-                seek_text->current++;
-                continue;
-            } else {
-                show_errormessage(seek_text, "Unexpected Character in Instruction");
-                return NULL;
-            }
+        if ('A' <= *seek_text->current && *seek_text->current <= 'Z') {
+            *len_out += 1;
+            seek_text->current++;
+            continue;
+        } else {
+            show_errormessage(seek_text, "Unexpected Character in Instruction");
+            return NULL;
+        }
     }
     if (*len_out == 0) {
         return NULL;
@@ -86,7 +88,7 @@ static const char* seek_instruction(struct seeking_text* seek_text, int* const l
 static char delimiter[] = {'(', ')', ',', '+'};
 
 static _Bool is_in_delimiter(char c) {
-    for (int i=0; i < sizeof(delimiter)/sizeof(delimiter[0]); ++i) {
+    for (int i = 0; i < ARRAY_SIZEOF(delimiter); ++i) {
         if (c == delimiter[i]) {
             return true;
         }
@@ -102,20 +104,21 @@ static int parse_number(struct seeking_text* text) {
     while (*text->current != '\0') {
         // "12AB " or "12AB\n" or  "12AB,"  or "12ABH"...
 
-        if (isspace(*text->current) || is_in_delimiter(*text->current)  ||
-            *(text->current) == 'H' || *(text->current) == 'h') {
+        if (isspace(*text->current) || is_in_delimiter(*text->current) || *(text->current) == 'H' ||
+            *(text->current) == 'h') {
             break;
         }
 
-        if ('0' <= *(text->current) && *(text->current) <= '9'){
+        if ('0' <= *(text->current) && *(text->current) <= '9') {
             len++;
             (text->current)++;
             continue;
         }
-        if (('A' <= *(text->current) && *(text->current) <= 'F') || 'a' <= *(text->current) && *(text->current) <= 'f') {
+        if (('A' <= *(text->current) && *(text->current) <= 'F') ||
+            'a' <= *(text->current) && *(text->current) <= 'f') {
             len++;
             (text->current)++;
-            may_hex =true;
+            may_hex = true;
             continue;
         }
 
@@ -141,17 +144,15 @@ static int parse_number(struct seeking_text* text) {
 }
 
 bool is_label_char(char c) {
-    return ('a' <= c &&  c <= 'z') || ('A' <= c &&  c <= 'Z') || (c == '_') || ('0' <= c && c <= '9');
+    return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || (c == '_') || ('0' <= c && c <= '9');
 }
+
 bool is_label_first_char(char c) {
-    return ('a' <= c &&  c <= 'z') || ('A' <= c &&  c <= 'Z') || (c == '_');
+    return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || (c == '_');
 }
-static const char* register_text[] = {
-    "B", "C", "D", "E", "H", "L", "A",
-    "BC", "DF", "HL", "SP", "AF",
-    "NZ", "Z", "NC", "C", "PO", "PE", "P", "M",
-    "IX", "IY"
-};
+
+static const char* register_text[] = {"B",  "C",  "D", "E",  "H", "L",  "A",  "BC", "DF", "HL", "SP",
+                                      "AF", "NZ", "Z", "NC", "C", "PO", "PE", "P",  "M",  "IX", "IY"};
 
 void seek_label(struct seeking_text* text, struct ASM_Label_Data* label_out) {
     const char* start = text->current;
@@ -169,7 +170,7 @@ void seek_label(struct seeking_text* text, struct ASM_Label_Data* label_out) {
         text->current++;
     }
 
-    for (int i=0; i < sizeof(register_text)/sizeof(register_text[0]); i++) {
+    for (int i = 0; i < ARRAY_SIZEOF(register_text); i++) {
         if (strncmp(label_out->name, register_text[i], label_out->length) == 0) {
             label_out->length = 0;
             text->current = start;
@@ -202,9 +203,8 @@ wrong_return: {
 }
 }
 
-static ASM_Opcode *tryCreateOperand(const char* name, int name_len,
-                             struct seeking_text* text, const struct ASM_Instruction* instruction) {
-
+static ASM_Opcode* tryCreateOperand(const char* name, int name_len, struct seeking_text* text,
+                                    const struct ASM_Instruction* instruction) {
     if (strncmp(instruction->instruction, name, name_len) != 0) {
         return NULL;
     }
@@ -214,7 +214,7 @@ static ASM_Opcode *tryCreateOperand(const char* name, int name_len,
     struct Opcode_data data[6];
     int data_cnt = 0;
 
-    //           v  -> v seek here
+    //  v  -> v seek here
     // text:    "      A,"
     // operand:       "A,B"
     skip_whitespace(text);
@@ -222,7 +222,7 @@ static ASM_Opcode *tryCreateOperand(const char* name, int name_len,
     // delimiterの前後=space ok
     while (*operand_text != '\0' && *text->current != '\0') {
         if (is_in_delimiter(*operand_text)) {
-            //        v  -> v seek here
+            //  v  -> v seek here
             // text: "      ,A"
             // operand:    ",A"
             skip_whitespace(text);
@@ -233,7 +233,7 @@ static ASM_Opcode *tryCreateOperand(const char* name, int name_len,
             operand_text++;
             (text->current)++;
 
-            //         v -> v seek here
+            //  v -> v seek here
             // text: ",     A"
             // operand:    "A"
             skip_whitespace(text);
@@ -268,7 +268,7 @@ static ASM_Opcode *tryCreateOperand(const char* name, int name_len,
                 goto wrong_end;
             }
 
-            data[data_cnt].data  = number;
+            data[data_cnt].data = number;
             if (is_16bit) {
                 data[data_cnt].type = Opcode_data_2byte;
             } else {
@@ -307,15 +307,15 @@ static ASM_Opcode *tryCreateOperand(const char* name, int name_len,
     ASM_Opcode* result = malloc(sizeof(ASM_Opcode));
     result->instruction = instruction;
     result->data_len = data_cnt;
-    for (int i=0; i < data_cnt; i++) {
+    for (int i = 0; i < data_cnt; i++) {
         result->data[i] = data[i];
     }
     return result;
 
-    wrong_end: {
-        text->current = start;
-        return NULL;
-    }
+wrong_end: {
+    text->current = start;
+    return NULL;
+}
 }
 
 static ASM_Opcode* findInstruction(struct seeking_text* text) {
@@ -328,7 +328,7 @@ static ASM_Opcode* findInstruction(struct seeking_text* text) {
         return NULL;
     }
 
-    for (int i=0; i < ASM_Instructions_count; i++) {
+    for (int i = 0; i < ASM_Instructions_count; i++) {
         ASM_Opcode* op = tryCreateOperand(name, name_len, text, &ASM_instructions[i]);
         if (op != NULL) {
             return op;
@@ -404,7 +404,7 @@ BufferArea assemble(const char* source, struct Command_flags* flag) {
                     break;
                 }
                 case Opcode_data_label_relative: {
-                    if (unresolvedLabel_cnt >= sizeof(unresolvedLabel) / sizeof(unresolvedLabel[0])) {
+                    if (unresolvedLabel_cnt >= ARRAY_SIZEOF(unresolvedLabel)) {
                         fprintf(stderr, "label is too many");
                         return result;
                     }
@@ -419,7 +419,7 @@ BufferArea assemble(const char* source, struct Command_flags* flag) {
                     break;
                 }
                 case Opcode_data_label_absolute: {
-                    if (unresolvedLabel_cnt >= sizeof(unresolvedLabel) / sizeof(unresolvedLabel[0])) {
+                    if (unresolvedLabel_cnt >= ARRAY_SIZEOF(unresolvedLabel)) {
                         fprintf(stderr, "label is too many");
                         return result;
                     }
@@ -470,11 +470,8 @@ BufferArea assemble(const char* source, struct Command_flags* flag) {
     return result;
 }
 
-
-void print_BufferArea(BufferArea area, FILE *out) {
-    for (int i=0; i < area.size; i++) {
-        fprintf(out,"%02x", area.buffer[i]);
+void print_BufferArea(BufferArea area, FILE* out) {
+    for (int i = 0; i < area.size; i++) {
+        fprintf(out, "%02x", area.buffer[i]);
     }
 }
-
-

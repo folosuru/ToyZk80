@@ -11,7 +11,7 @@ int getOpcodeSize(const struct ASM_Instruction* instruction) {
 
     int result = (int)instruction->OpCodeCount;
 
-    for (int i=0; i < sizeof(instruction->data) / sizeof(instruction->data[0]) ; i++) {
+    for (int i = 0; i < sizeof(instruction->data) / sizeof(instruction->data[0]); i++) {
         switch (instruction->data[i]) {
             case data_none:
                 return result;
@@ -29,11 +29,10 @@ int getOpcodeSize(const struct ASM_Instruction* instruction) {
     return result;
 }
 
-
 int resolveLabel(struct unresolved_label* find_label, struct defined_label (*definedLabel)[], int definedLabel_count) {
-    for (int i=0; i < definedLabel_count; i++) {
+    for (int i = 0; i < definedLabel_count; i++) {
         if (find_label->name_len == (*definedLabel)[i].name_len &&
-            strncmp(find_label->name, (*definedLabel)[i].name, (*definedLabel)[i].name_len) == 0){
+            strncmp(find_label->name, (*definedLabel)[i].name, (*definedLabel)[i].name_len) == 0) {
             return i;
         }
     }
