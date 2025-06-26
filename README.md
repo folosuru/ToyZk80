@@ -110,3 +110,21 @@ JP LABEL_0
 
 #### `--address`
 逆アセンブル時に、行頭にアドレスを表示する。表示用。
+<details>
+<summary>表示例</summary>
+
+```sh
+$ ToyTk80_asm.exe --disassemble .\in.bin --address
+0x8000 |     LD A,00H
+0x8002 |     LD B,0aH
+0x8004 | LABEL_0: 
+0x8004 |     ADD A,B
+0x8005 |     DEC B
+0x8006 |     LD C,A
+0x8007 |     LD A,00H
+0x8009 |     CP B
+0x800a |     JR NZ,LABEL_0
+0x800c |     LD A,C
+0x800d |     HALT
+```
+</details>
