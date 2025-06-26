@@ -37,6 +37,7 @@ struct Command_flags {
     FILE* out;
     int start_address;
     bool create_addressJump_label;
+    bool show_assemble_address;
 };
 
 BufferArea assemble(const char* source, struct Command_flags* flag);

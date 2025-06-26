@@ -12,6 +12,7 @@ int main(int argc, char *argv[]){
     FILE* file;
     struct Command_flags flags;
     flags.create_addressJump_label = false;
+    flags.show_assemble_address = false;
     flags.start_address = 0x8000;
 
     // 0=> assemble
@@ -31,6 +32,10 @@ int main(int argc, char *argv[]){
         }
         if (strcmp("--label", argv[i]) == 0) {
             flags.create_addressJump_label  = true;
+            continue;
+        }
+        if (strcmp("--address", argv[i]) == 0) {
+            flags.create_addressJump_label = true;
             continue;
         }
         if (strcmp("-o", argv[i]) == 0) {

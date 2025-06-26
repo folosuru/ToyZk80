@@ -58,17 +58,17 @@ ToyTk80_asm ./in.hex -o ./out.asm --disassemble
 ```
 こう出力される。
 ```asm
-LD A,00H
-LD B,0aH
+    LD A,00H
+    LD B,0aH
 LABEL_0: 
-ADD A,B
-DEC B
-LD C,A
-LD A,00H
-CP B
-JR NZ,LABEL_0
-LD A,C
-HALT 
+    ADD A,B
+    DEC B
+    LD C,A
+    LD A,00H
+    CP B
+    JR NZ,LABEL_0
+    LD A,C
+    HALT 
 ```
 </details>
 
@@ -107,3 +107,6 @@ JP LABEL_0
 
 #### `-start [hex]`
 プログラムの開始位置を16進数で指定する。何も指定しない場合`-start 8000`と同様の動作。
+
+#### `--address`
+逆アセンブル時に、行頭にアドレスを表示する。表示用。

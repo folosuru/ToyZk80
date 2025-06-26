@@ -154,14 +154,20 @@ void disassemble(const char* source, int source_len, struct Command_flags* flags
     int current_label_index = 0;
     for (int i = 0; i < opcode_list_cnt; ++i) {
         if (program_pos == unnamed_label_pos[current_label_index]) {
+            if (flags->show_assemble_address) {
+                fprintf(out, "0x%.4x | ", program_pos);
+            }
             fprintf(out, "LABEL_%d: \n", current_label_index);
             if (current_label_index < unnamed_label_pos_cnt) current_label_index++;
         }
         ASM_Opcode* current = &opcode_list[i];
-
+        if (flags->show_assemble_address) {
+            fprintf(out, "0x%.4x | ", program_pos);
+        }
         program_pos += getOpcodeSize(current->instruction);
 
-        fprintf(out, "%s ", current->instruction->instruction);
+
+        fprintf(out, "%*s%s ",4,"", current->instruction->instruction);
         const char* current_operand_char = current->instruction->operand;
         int current_operand_len = 0;
         int current_operand_data_count = 0;
