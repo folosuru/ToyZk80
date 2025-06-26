@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
             continue;
         }
         if (strcmp("--address", argv[i]) == 0) {
-            flags.create_addressJump_label = true;
+            flags.show_assemble_address = true;
             continue;
         }
         if (strcmp("-o", argv[i]) == 0) {
