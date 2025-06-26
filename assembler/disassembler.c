@@ -107,12 +107,14 @@ void disassemble(const char* source, int source_len, struct Command_flags* flags
     skip_whitespace(&seek_src);
     skip_return(&seek_src);
 
-    while ((seek_src.current - seek_src.start) < source_len-2) {
-        sscanf_s(seek_src.current, "%02x", &data_area[data_len]);
+    while ((seek_src.current - seek_src.start) < source_len - 2) {
+        int scan_result = sscanf_s(seek_src.current, "%02x", &data_area[data_len]);
+        if (scan_result == EOF) break;
         seek_src.current += 2;
         data_len++;
-        skip_whitespace(&seek_src);
-        skip_return(&seek_src);
+        while (true) {
+            if (!skip_whitespace(&seek_src) && !skip_return(&seek_src)) break;
+        }
     }
 
     int seek_pos = 0;

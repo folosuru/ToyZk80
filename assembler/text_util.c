@@ -29,6 +29,9 @@ _Bool skip_return(struct seeking_text* text) {
     if (skip == 0) {
         return false;
     }
-    text->current += skip;
+    do {
+        skip = is_return_char(text->current);
+        text->current += skip;
+    } while(skip != 0);
     return true;
 }
