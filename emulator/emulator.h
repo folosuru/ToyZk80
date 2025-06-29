@@ -56,6 +56,19 @@ struct Context {
     // Interrupt Vector & Memory Refresh
     uint8_t I;
     uint8_t R;
+
+    // flags
+    union {
+        struct {
+            uint8_t SF : 1;
+            uint8_t ZF : 1;
+            uint8_t HC : 1;
+            uint8_t PV : 1;  // P/V (overflow)
+            uint8_t NF : 1;
+            uint8_t CF : 1;  // carry
+        };
+        uint8_t data;
+    }flags;
 };
 
 struct Memory {
@@ -63,14 +76,24 @@ struct Memory {
     Byte Display[8];
 };
 
+typedef void (*InstructionPtr)();
 extern struct Context Context_instance;
 extern struct Memory Memory_instance;
+
+void  init_emulator();
 
 Byte MemoryManager_ByteRead(EmulatorPtr);
 Word MemoryManager_WordRead(EmulatorPtr);
 void MemoryManager_ByteWrite(EmulatorPtr, Byte);
 void MemoryManager_WordWrite(EmulatorPtr, Word);
 
-void AccessViolation();
+void UpdateDisplay(int digit);
+
+void Execute();
+int AccessViolation(EmulatorPtr);
+
+#ifdef DEBUG
+void test_instruction();
+#endif
 
 #endif //TOYTK80_EMULATOR_H
