@@ -258,7 +258,7 @@ static ASM_Opcode* tryCreateOperand(const char* name, int name_len, struct seeki
                         if (*text->current == ':') {
                             text->current++;
                         }
-                        data[data_cnt].type = Opcode_data_2byte;
+                        data[data_cnt].type = Opcode_data_label_absolute;
                         data[data_cnt].label = label;
                         data_cnt++;
                         skip_whitespace(text);
@@ -458,7 +458,6 @@ BufferArea assemble(const char* source, struct Command_flags* flag) {
                 show_errormessage(&t, "label %.*s is too far", found_label->name_len, found_label->name);
                 continue;
             }
-
             *(unresolvedLabel[i].write_position) = (signed char)(addr_diff);
         } else {
             int label_absolute_pos = found_label->position - result.buffer + flag->start_address;
