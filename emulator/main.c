@@ -15,8 +15,6 @@ struct Context Context_instance;
 void test();
 
 int main(int argc, char *argv[]) {
-    test_instruction();
-
     enum { N = 12};                                     // Hello world! 文字数.
     int  x, y, w, h, count = 0;
     initscr();                                          // curses:(スクリーン)初期化.
@@ -30,18 +28,28 @@ int main(int argc, char *argv[]) {
     init_pair(1, COLOR_WHITE, COLOR_RED );
     init_pair(2, COLOR_WHITE, 8 );
     init_emulator();
-
+    Byte program[] = {
+        0x3e,
+        0x80,
+        0x06,
+        0x70,
+        0x0e,
+        0x7f,
+        0x21,
+        0xff,
+        0x83,
+        0x90,
+        0xc2,
+        0x0e,
+        0x80,
+        0x0c,
+        0x71,
+        0x76
+    };
+    memcpy(Memory_instance.program, &program, sizeof(program));
     for (int i=0; i < 8; i++) UpdateDisplay(i);
     int pos = 0;
-    /*
-    for (int i=0; i< 1000; i++) {
-        usleep(15000);
-        if ((i & 0xff) == 0xff) {
-            pos++;
-            if (pos==8) pos = 0;
-        }
-        MemoryManager_ByteWrite(0x83f8 + pos, i & 0xff);
-    }*/
+    mainloop();
     getch();
     endwin();                                           // curses 終了.
     return 0;

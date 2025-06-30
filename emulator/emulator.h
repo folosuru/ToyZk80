@@ -77,8 +77,14 @@ struct Memory {
 };
 
 typedef void (*InstructionPtr)();
+typedef InstructionPtr (*InstructionPtrTable)[256];
+
+InstructionPtrTable InstructionTable();
+
 extern struct Context Context_instance;
 extern struct Memory Memory_instance;
+
+_Noreturn void mainloop();
 
 void  init_emulator();
 

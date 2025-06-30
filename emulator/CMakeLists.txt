@@ -48,6 +48,13 @@ add_executable(ToyTk80_emu
         core.c
         display.c
         instruction.c
+        instruction/logic_instruction.c
+        instruction/ld_instruction.c
+        instruction/math_instruction.c
+        instruction/condition_instruction.c
+        instruction/unimplement_instruction.c
+        instruction/jump_instruction.c
+        instruction/stack_instruction.c
 )
 
 # Link the PDCurses library to the emulator.

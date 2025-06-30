@@ -1,0 +1,63 @@
+#ifndef TOYTK80_UNIMPLEMENT_INSTRUCTION_H
+#define TOYTK80_UNIMPLEMENT_INSTRUCTION_H
+
+#ifndef UNIMPLEMENT_DEF
+#define UNIMPLEMENT_DEF(name) void name();
+#endif
+
+UNIMPLEMENT_DEF(instruction_OUT_np_A)
+UNIMPLEMENT_DEF(instruction_IN_A_np)
+UNIMPLEMENT_DEF(instruction_DI)
+UNIMPLEMENT_DEF(instruction_EI)
+UNIMPLEMENT_DEF(instruction_DAA)
+
+// TODO
+
+UNIMPLEMENT_DEF(instruction_RET_NZ)
+UNIMPLEMENT_DEF(instruction_CALL_NZ_nn)
+UNIMPLEMENT_DEF(instruction_RET_Z)
+UNIMPLEMENT_DEF(instruction_CALL_Z_nn)
+UNIMPLEMENT_DEF(instruction_RET_NC)
+UNIMPLEMENT_DEF(instruction_CALL_NC_nn)
+UNIMPLEMENT_DEF(instruction_RET_C)
+UNIMPLEMENT_DEF(instruction_CALL_C_nn)
+UNIMPLEMENT_DEF(instruction_RET_PO)
+UNIMPLEMENT_DEF(instruction_CALL_PO_nn)
+UNIMPLEMENT_DEF(instruction_RET_PE)
+UNIMPLEMENT_DEF(instruction_CALL_PE_nn)
+UNIMPLEMENT_DEF(instruction_RET_P)
+UNIMPLEMENT_DEF(instruction_CALL_P_nn)
+UNIMPLEMENT_DEF(instruction_RET_M)
+UNIMPLEMENT_DEF(instruction_CALL_M_nn)
+UNIMPLEMENT_DEF(instruction_RET)
+UNIMPLEMENT_DEF(instruction_CALL_nn)
+UNIMPLEMENT_DEF(instruction_Section_DD)
+UNIMPLEMENT_DEF(instruction_Section_ED)
+UNIMPLEMENT_DEF(instruction_Section_FD)
+UNIMPLEMENT_DEF(instruction_RST_00H)
+UNIMPLEMENT_DEF(instruction_Section_CB)
+UNIMPLEMENT_DEF(instruction_RST_08H)
+UNIMPLEMENT_DEF(instruction_RST_10H)
+UNIMPLEMENT_DEF(instruction_RST_18H)
+UNIMPLEMENT_DEF(instruction_RST_20H)
+UNIMPLEMENT_DEF(instruction_RST_28H)
+UNIMPLEMENT_DEF(instruction_RST_30H)
+UNIMPLEMENT_DEF(instruction_RST_38H)
+
+
+UNIMPLEMENT_DEF(instruction_RLCA)
+UNIMPLEMENT_DEF(instruction_RRCA)
+UNIMPLEMENT_DEF(instruction_RLA)
+UNIMPLEMENT_DEF(instruction_RRA)
+UNIMPLEMENT_DEF(instruction_CPL)
+UNIMPLEMENT_DEF(instruction_SCF)
+UNIMPLEMENT_DEF(instruction_CCF)
+
+UNIMPLEMENT_DEF(instruction_ADD_HL_BC)
+UNIMPLEMENT_DEF(instruction_ADD_HL_DE)
+UNIMPLEMENT_DEF(instruction_ADD_HL_HL)
+UNIMPLEMENT_DEF(instruction_ADD_HL_SP)
+
+UNIMPLEMENT_DEF(instruction_DJNZ_e)
+#undef UNIMPLEMENT_DEF
+#endif  // TOYTK80_UNIMPLEMENT_INSTRUCTION_H

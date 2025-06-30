@@ -1,11 +1,20 @@
 #include "curses.h"
 #include "emulator.h"
+#include <unistd.h>
 
 void  init_emulator() {
     Context_instance.PC = 0x8000;
     return;
 }
 
+_Noreturn void mainloop() {
+    InstructionPtrTable table = InstructionTable();
+    while (true) {
+        usleep(1000);
+        (*(*table)[MemoryManager_ByteRead(Context_instance.PC)])();
+        Context_instance.R++;
+    }
+}
 
 Byte MemoryManager_ByteRead(EmulatorPtr ptr) {
     if (0x8000 <= ptr) {
@@ -32,11 +41,11 @@ Word MemoryManager_WordRead(EmulatorPtr ptr) {
 void MemoryManager_ByteWrite(EmulatorPtr ptr, Byte data) {
     if (0x8000 <= ptr) {
         if (ptr <= 0x81ff ) {
-            *(Word*)(&Memory_instance.program[ptr - 0x8000]) = data;
+            *(Byte*)(&Memory_instance.program[ptr - 0x8000]) = data;
             return;
         }
         if (0x83f8 <= ptr && ptr <= 0x83ff) {
-            *(Word*)(&Memory_instance.Display[ptr - 0x83f8]) = data;
+            *(Byte*)(&Memory_instance.Display[ptr - 0x83f8]) = data;
             UpdateDisplay(ptr - 0x83f8);
             refresh();
             return;

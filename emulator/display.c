@@ -52,8 +52,9 @@ void UpdateDisplay(int digit) {
 
 int AccessViolation(EmulatorPtr ptr) {
     char buf[512];
-    sprintf(buf, "Access Violation Occur at %llu.", ptr);
-    mvaddstr(24, 5, buf);
+    sprintf(buf, "Access Violation Occur at %llx.", ptr);
+    mvaddstr(20, 5, buf);
+    mvprintw(24, 5, "PC: %x", Context_instance.PC);
     getch();
     exit(2);
 }
