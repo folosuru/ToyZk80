@@ -103,8 +103,10 @@ void disassemble(const char* source, int source_len, struct Command_flags* flags
     skip_return(&seek_src);
 
     while ((seek_src.current - seek_src.start) < source_len - 2) {
-        int scan_result = sscanf_s(seek_src.current, "%02x", &data_area[data_len]);
+        int v;
+        int scan_result = sscanf_s(seek_src.current, "%2x", &v);
         if (scan_result == EOF) break;
+        data_area[data_len] = v;
         seek_src.current += 2;
         data_len++;
         while (true) {
@@ -114,7 +116,6 @@ void disassemble(const char* source, int source_len, struct Command_flags* flags
 
     int seek_pos = 0;
     int program_pos = flags->start_address;
-
     int unnamed_label_pos[1024];
     int unnamed_label_pos_cnt = 0;
     ASM_Opcode opcode_list[1024];

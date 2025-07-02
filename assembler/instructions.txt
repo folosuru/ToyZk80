@@ -14,7 +14,7 @@
     {"DEC", "C", {0x0D}, 1, {data_none}},
     {"LD", "C,n", {0x0E}, 1, {data_n, data_none}},
     {"RRCA", "", {0x0F}, 1, {data_none}},
-    {"DJNZ", "e", {0x10}, 1, {data_none}},
+    {"DJNZ", "e", {0x10}, 1, {data_e, data_none}},
     {"LD", "DE,nn", {0x11}, 1, {data_nn, data_none}},
     {"LD", "(DE),A", {0x12}, 1, {data_none}},
     {"INC", "DE", {0x13}, 1, {data_none}},
