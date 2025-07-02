@@ -98,10 +98,17 @@ void instruction_JP_HLp() {
     Context_instance.PC = MemoryManager_WordRead(Context_instance.HL);
 }
 
-void instruction_DJNZ_e();
+void instruction_DJNZ_e()  {
+    Context_instance.B--;
+    if (Context_instance.B != 0 ) {
+        Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
+    }
+    Context_instance.PC += 2;
+}
+
+#ifdef DEBUG
 
 extern void instruction_ADD_A_B();
-
 void test_instruction_jump() {
     MemoryManager_WordWrite(0x8000+1, 0x8080);
     check_test_start(instruction_JP_nn(), Context_instance.PC == 0x8080);
@@ -122,3 +129,4 @@ void test_instruction_jump() {
     MemoryManager_ByteWrite(0x8000+1, 0xFF);
     check_test_start(instruction_JR_e(), Context_instance.PC == 0x8000-1);
 }
+#endif

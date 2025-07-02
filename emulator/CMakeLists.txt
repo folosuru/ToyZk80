@@ -61,11 +61,11 @@ add_executable(ToyTk80_emu
 # This will also add the necessary include directory (${PDCURSES_DIR})
 # because it's specified in the 'pdcurses' IMPORTED target.
 target_link_libraries(ToyTk80_emu PRIVATE pdcurses)
+
 target_compile_options(ToyTk80_emu
-        PRIVATE -masm=intel
+        PRIVATE -masm=intel -O3
 )
 target_compile_definitions(ToyTk80_emu
         PRIVATE
-        # If the debug configuration pass the DEBUG define to the compiler
         $<$<CONFIG:Debug>:DEBUG>
 )
