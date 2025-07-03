@@ -1,10 +1,8 @@
 #include <stdlib.h>
-#include <string.h>
 
 #include "curses.h"
 #include "emulator.h"
 
-#include "instruction/instruction_test_util.h"
 #include "instruction/logic_instruction.h"
 #include "instruction/math_instruction.h"
 #include "instruction/ld_instruction.h"
@@ -30,14 +28,13 @@ void instruction_HALT() {
     mvaddstr(24, 5, "program halted.");
     getch();
     exit(0);
-    Context_instance.PC++;
 }
 
 
 InstructionPtrTable InstructionTable() {
     // instruction list
 
-    InstructionPtr table[256] = {
+    static const InstructionPtr table[256] = {
 instruction_NOP,           instruction_LD_BC_nn,   instruction_LD_BCp_A,  instruction_INC_BC,
 instruction_INC_B,         instruction_DEC_B,      instruction_LD_B_n,    instruction_RLCA,
 instruction_EX_AF_AFprime, instruction_ADD_HL_BC,  instruction_LD_A_BCp,  instruction_DEC_BC,
@@ -103,10 +100,7 @@ instruction_CALL_P_nn,     instruction_PUSH_AF,    instruction_OR_n,      instru
 instruction_RET_M,         instruction_LD_SP_HL,   instruction_JP_M_nn,   instruction_EI,
 instruction_CALL_M_nn,     instruction_Section_FD, instruction_CP_n,      instruction_RST_38H,
     };
-
-    InstructionPtrTable table_ptr = malloc(sizeof(table));
-    memcpy(table_ptr, &table, sizeof(table));
-    return table_ptr;
+    return &table;
 }
 
 #ifdef DEBUG

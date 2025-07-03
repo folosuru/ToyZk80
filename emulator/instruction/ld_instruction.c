@@ -38,7 +38,7 @@
 #define INSTRUCTION_LD_A_RRp(RR)                                          \
     void instruction_LD_A_##RR##p() {                                     \
         Context_instance.A = MemoryManager_ByteRead(Context_instance.RR); \
-        Context_instance.PC += 2;                                         \
+        Context_instance.PC += 1;                                         \
     }
 void instruction_LD_nnp_A() {
     MemoryManager_ByteWrite(MemoryManager_WordRead(Context_instance.PC + 1), Context_instance.A);

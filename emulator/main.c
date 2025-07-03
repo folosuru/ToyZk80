@@ -15,7 +15,7 @@ struct Context Context_instance;
 void test();
 
 int main(int argc, char *argv[]) {
-
+    test_instruction();
 
     initscr();
     noecho();

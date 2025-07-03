@@ -63,35 +63,31 @@ void instruction_JP_M_nn() {
     }
 }
 void instruction_JR_e() {
-    Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
+    Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1) + 2;
 }
 void instruction_JR_C_e() {
     if (Context_instance.flags.CF) {
         Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
-    } else {
-        Context_instance.PC += 2;
     }
+    Context_instance.PC += 2;
 }
 void instruction_JR_NC_e() {
     if (!Context_instance.flags.CF) {
         Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
-    } else {
-        Context_instance.PC += 2;
     }
+    Context_instance.PC += 2;
 }
 void instruction_JR_Z_e() {
     if (Context_instance.flags.ZF) {
         Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
-    } else {
-        Context_instance.PC += 2;
     }
+    Context_instance.PC += 2;
 }
 void instruction_JR_NZ_e() {
     if (!Context_instance.flags.ZF) {
         Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
-    } else {
-        Context_instance.PC += 2;
     }
+    Context_instance.PC += 2;
 }
 
 void instruction_JP_HLp() {
@@ -127,6 +123,6 @@ void test_instruction_jump() {
     check_PC_test(3);
 
     MemoryManager_ByteWrite(0x8000+1, 0xFF);
-    check_test_start(instruction_JR_e(), Context_instance.PC == 0x8000-1);
+    check_test_start(instruction_JR_e(), Context_instance.PC == 0x8002-1);
 }
 #endif

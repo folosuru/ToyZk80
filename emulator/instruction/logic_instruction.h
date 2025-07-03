@@ -14,6 +14,11 @@ void instruction_OR_HLp();
 void instruction_XOR_n();
 void instruction_XOR_HLp();
 
+void instruction_RRCA();
+void instruction_RLCA();
+void instruction_RRA();
+void instruction_RLA();
+
 #define DEFINE_LOGIC_INSTRUCTION(R)\
     INSTRUCTION_AND_R(R);     \
     INSTRUCTION_OR_R(R);      \

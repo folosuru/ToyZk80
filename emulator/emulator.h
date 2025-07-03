@@ -77,7 +77,7 @@ struct Memory {
 };
 
 typedef void (*InstructionPtr)();
-typedef InstructionPtr (*InstructionPtrTable)[256];
+typedef const InstructionPtr (*InstructionPtrTable)[256];
 
 InstructionPtrTable InstructionTable();
 

@@ -86,6 +86,7 @@ void instruction_ADC_A_n() {
     INSTRUCTION_ADC_A_PROCESS(operand)
     Context_instance.PC += 2;
 }
+
 void instruction_ADC_A_HLp() {
     Byte operand = MemoryManager_ByteRead(Context_instance.HL);
     INSTRUCTION_ADC_A_PROCESS(operand)
@@ -123,7 +124,7 @@ void instruction_SUB_n() {
     Context_instance.PC += 2;
 }
 
-#define INSTRUCTION_SBC_A_PROCESS(operand) \
+#define INSTRUCTION_SBC_A_PROCESS(operand)                                                            \
     __asm__(                                                                                          \
         "sbb %0, %5\n\t"                                                                              \
         "sets %1\n\t"                                                                                 \
@@ -132,13 +133,13 @@ void instruction_SUB_n() {
         "setc %4\n\t"                                                                                 \
         : "+r"(Context_instance.A), "=r"(Context_instance.flags.SF), "=r"(Context_instance.flags.ZF), \
           "=r"(Context_instance.flags.PV), "=r"(Context_instance.flags.CF)                            \
-        : "r"(operand));                                                        \
-    Context_instance.flags.NF = 0;                                                                    \
+        : "r"(operand));                                                                              \
+    Context_instance.flags.NF = 0;
 
-#define INSTRUCTION_SBC_A_R(sub_register)                                                                 \
-    void instruction_SBC_##sub_register() {                                                               \
-        INSTRUCTION_SBC_A_PROCESS(Context_instance.sub_register)                                          \
-        Context_instance.PC += 1;\
+#define INSTRUCTION_SBC_A_R(sub_register)                        \
+    void instruction_SBC_##sub_register() {                      \
+        INSTRUCTION_SBC_A_PROCESS(Context_instance.sub_register) \
+        Context_instance.PC += 1;                                \
     }
 
 void instruction_SBC_A_n() {
@@ -146,6 +147,7 @@ void instruction_SBC_A_n() {
     INSTRUCTION_SBC_A_PROCESS(operand)
     Context_instance.PC += 2;
 }
+
 void instruction_SBC_HLp() {
     Byte operand = MemoryManager_ByteRead(Context_instance.HL);
     INSTRUCTION_SBC_A_PROCESS(operand)
@@ -175,9 +177,8 @@ void instruction_INC_HLp() {
         "sets %1\n\t"
         "setz %2\n\t"
         "seto %3\n\t"
-        "setc %4\n\t"
         : "+r"(result), "=r"(Context_instance.flags.SF), "=r"(Context_instance.flags.ZF),
-          "=r"(Context_instance.flags.PV), "=r"(Context_instance.flags.CF)
+          "=r"(Context_instance.flags.PV)
         :);
     MemoryManager_ByteWrite(Context_instance.HL, result);
     Context_instance.flags.NF = 1;
@@ -191,16 +192,25 @@ void instruction_DEC_HLp() {
         "sets %1\n\t"
         "setz %2\n\t"
         "seto %3\n\t"
-        "setc %4\n\t"
         : "+r"(result), "=r"(Context_instance.flags.SF), "=r"(Context_instance.flags.ZF),
-          "=r"(Context_instance.flags.PV), "=r"(Context_instance.flags.CF)
+          "=r"(Context_instance.flags.PV)
         :);
     MemoryManager_ByteWrite(Context_instance.HL, result);
     Context_instance.flags.NF = 0;
     Context_instance.PC++;
 }
 
-#define DEFINE_MATH_INSTRUCTION_RR(R) INSTRUCTION_INC_R(R) INSTRUCTION_DEC_R(R)
+#define INSTRUCTION_ADD_HL_RR(R)                                         \
+    void instruction_ADD_HL_##R() {                                      \
+        __asm__(                                                         \
+            "add %0, %2\n\t"                                             \
+            "setc %1\n\t"                                                \
+            : "+r"(Context_instance.HL), "=r"(Context_instance.flags.CF) \
+            : "r"(Context_instance.R));                                  \
+        Context_instance.flags.NF = 1;                                   \
+    }
+
+#define DEFINE_MATH_INSTRUCTION_RR(R) INSTRUCTION_INC_R(R) INSTRUCTION_DEC_R(R) INSTRUCTION_ADD_HL_RR(R)
 
 DEFINE_MATH_INSTRUCTION_RR(BC)
 DEFINE_MATH_INSTRUCTION_RR(DE)

@@ -11,11 +11,11 @@
         "setz %2\n\t"                                                                                 \
         "mov ah, 0\n\t"                                                                               \
         "popcnt %3, ax\n\t" /* for before Nehalem gen user: sorry.*/                                  \
-        : "+r"(Context_instance.A), "=r"(Context_instance.flags.SF), "=r"(Context_instance.flags.ZF), \
+        : "+a"(Context_instance.A), "=r"(Context_instance.flags.SF), "=r"(Context_instance.flags.ZF), \
           "=r"(popcnt_result)                                                                         \
         : "r"(operand));                                                                              \
     Context_instance.flags.HC = 1;                                                                    \
-    Context_instance.flags.PV = popcnt_result;                                                        \
+    Context_instance.flags.PV = popcnt_result & 1;                                                        \
     Context_instance.flags.NF = 0;                                                                    \
     Context_instance.flags.CF = 0;
 
@@ -44,7 +44,7 @@ void instruction_AND_HLp() {
         "setz %2\n\t"                                                                                 \
         "mov ah, 0\n\t"                                                                               \
         "popcnt %3, ax\n\t" /* for before Nehalem gen user: sorry.*/                                  \
-        : "+r"(Context_instance.A), "=r"(Context_instance.flags.SF), "=r"(Context_instance.flags.ZF), \
+        : "+a"(Context_instance.A), "=r"(Context_instance.flags.SF), "=r"(Context_instance.flags.ZF), \
           "=r"(popcnt_result)                                                                         \
         : "r"(operand));                                                                            \
     Context_instance.flags.HC = 1;                                                                    \
@@ -98,6 +98,60 @@ void instruction_XOR_HLp() {
     Context_instance.PC += 1;
 }
 
+
+// Rotate Right Circular
+void instruction_RRCA() {
+    Context_instance.flags.CF = Context_instance.A & 0x1;
+    asm(
+        "ror %0, 1":
+        "+r"(Context_instance.A):);
+    Context_instance.PC++;
+}
+
+// Rotate Left Circular
+void instruction_RLCA() {
+    Context_instance.flags.CF = (Context_instance.A >> 7) & 0x1;
+    asm(
+        "rol %0, 1":
+        "+r"(Context_instance.A):);
+    Context_instance.PC++;
+}
+
+// Rotate Right Circular with Carry
+void instruction_RRA() {
+    uint8_t CF_old = Context_instance.flags.CF;
+    Context_instance.flags.CF = Context_instance.A  & 0x1;
+
+    // set 7 bit to carry
+    // before:    7 6 5 4 3 2 1 0
+    // carry_set: 7 6 5 4 3 2 1 C
+    // after rol: C 7 6 5 4 3 2 1
+    Context_instance.A = ((Context_instance.A) & 0xFE) | CF_old;
+
+    asm(
+        "ror %0, 1":
+        "+r"(Context_instance.A):);
+    Context_instance.PC++;
+}
+
+// Rotate Left Circular with Carry
+void instruction_RLA() {
+    uint8_t CF_old = Context_instance.flags.CF;
+    Context_instance.flags.CF = (Context_instance.A >> 7) & 0x1;
+
+    // set 7 bit to carry
+    // carry_set: C 6 5 4 3 2 1 0
+    // after rol: 6 5 4 3 2 1 0 C
+    Context_instance.A = ((Context_instance.A) & 0x7A) | (CF_old << 7);
+
+    asm(
+        "rol %0, 1":
+        "+r"(Context_instance.A):);
+    Context_instance.PC++;
+}
+
+
+
 #define DEFINE_LOGIC_INSTRUCTION(R) \
     INSTRUCTION_AND_R(R);           \
     INSTRUCTION_OR_R(R);            \
@@ -149,5 +203,41 @@ void test_instruction_logic() {
     check_test_start(instruction_AND_HLp(), Context_instance.A == 0x22);
     check_PC_test(1);
 
+
+    Context_instance.A = 0x80; // 1000 0000
+    check_test_start(instruction_RRCA(), Context_instance.A == 0x40); // 0100 0000
+    check_test(Context_instance.flags.CF == 0);
+
+    Context_instance.A = 0x1; // 0000 0001
+    check_test_start(instruction_RRCA(), Context_instance.A == 0x80); // 1000 0000
+    check_test(Context_instance.flags.CF == 1);
+
+    Context_instance.A = 0x40; // 0100 0000
+    check_test_start(instruction_RLCA(), Context_instance.A == 0x80); // 1000 0000
+    check_test(Context_instance.flags.CF == 0);
+
+    Context_instance.A = 0x80; // 1000 0000
+    check_test_start(instruction_RLCA(), Context_instance.A == 0x1); // 0000 0001
+    check_test(Context_instance.flags.CF == 1);
+
+    Context_instance.A = 0x4A; // 0100 1010
+    Context_instance.flags.CF = 1;
+    check_test_start(instruction_RLA(), Context_instance.A == 0x95); // 1001 0101
+    check_test(Context_instance.flags.CF == 0); // 0
+
+    Context_instance.A = 0x4A; // 0100 1010
+    Context_instance.flags.CF = 0;
+    check_test_start(instruction_RLA(), Context_instance.A == 0x94); // 1001 0100
+    check_test(Context_instance.flags.CF == 0); // 0
+
+    Context_instance.A = 0x4A; // 0100 1010
+    Context_instance.flags.CF = 1;
+    check_test_start(instruction_RRA(), Context_instance.A == 0xA5); // 1010 0101
+    check_test(Context_instance.flags.CF == 0);
+
+    Context_instance.A = 0xB7; // 1011 0111
+    Context_instance.flags.CF = 0;
+    check_test_start(instruction_RRA(), Context_instance.A == 0x5B); // 0101 1011
+    check_test(Context_instance.flags.CF == 1);
 }
 #endif
