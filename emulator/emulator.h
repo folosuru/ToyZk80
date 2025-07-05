@@ -3,6 +3,7 @@
 #define TOYTK80_EMULATOR_H
 
 #include <stdint.h>
+#include <curses.h>
 
 typedef uint8_t Byte;
 typedef uint16_t Word;
@@ -12,7 +13,20 @@ struct Context {
     // Main Register Set
     union {
         uint16_t AF;
-        struct { uint8_t F, A; };
+        struct {
+            union {
+                struct {
+                    uint8_t SF : 1;
+                    uint8_t ZF : 1;
+                    uint8_t HC : 1;
+                    uint8_t PV : 1;  // P/V (overflow)
+                    uint8_t NF : 1;
+                    uint8_t CF : 1;  // carry
+                };
+                uint8_t F;
+            };
+            uint8_t A;
+        };
     };
     union {
         uint16_t BC;
@@ -57,18 +71,6 @@ struct Context {
     uint8_t I;
     uint8_t R;
 
-    // flags
-    union {
-        struct {
-            uint8_t SF : 1;
-            uint8_t ZF : 1;
-            uint8_t HC : 1;
-            uint8_t PV : 1;  // P/V (overflow)
-            uint8_t NF : 1;
-            uint8_t CF : 1;  // carry
-        };
-        uint8_t data;
-    }flags;
 };
 
 struct Memory {
@@ -95,8 +97,12 @@ void MemoryManager_WordWrite(EmulatorPtr, Word);
 
 void UpdateDisplay(int digit);
 
-void Execute();
 int AccessViolation(EmulatorPtr);
+
+extern WINDOW * LED_window;
+extern WINDOW * register_window;
+void init_display();
+void print_register_window();
 
 #ifdef DEBUG
 void test_instruction();

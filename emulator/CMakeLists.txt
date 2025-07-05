@@ -55,6 +55,8 @@ add_executable(ToyTk80_emu
         instruction/unimplement_instruction.c
         instruction/jump_instruction.c
         instruction/stack_instruction.c
+        instruction/call_instruction.c
+        # file_reader.c
 )
 
 # Link the PDCurses library to the emulator.
@@ -69,3 +71,5 @@ target_compile_definitions(ToyTk80_emu
         PRIVATE
         $<$<CONFIG:Debug>:DEBUG>
 )
+target_include_directories(ToyTk80_emu PRIVATE ../)
+target_link_libraries(ToyTk80_emu PRIVATE ToyTk80_util)

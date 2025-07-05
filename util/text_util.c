@@ -1,0 +1,103 @@
+#include "util.h"
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+static int is_return_char(const char* text) {
+    if (*text == '\r') {
+        if (*(text + 1) == '\n') {  // CRLF
+            return 2;
+        }
+        return 1;  // CR
+    }
+    if (*text == '\n') {
+        return 1;  // LF
+    }
+    return 0;  // not return;
+}
+
+_Bool skip_whitespace(struct seeking_text* text) {
+    bool success = false;
+    if (isblank(*text->current)) {
+        do {
+            (text->current)++;
+        } while (isblank(*text->current));
+        success = true;
+    }
+    if (*text->current == ';') {
+        do {
+            text->current++;
+        } while (is_return_char(text->current) == 0);
+        success = true;
+    }
+    return success;
+}
+
+_Bool skip_return(struct seeking_text* text) {
+    int skip = is_return_char(text->current);
+    if (skip == 0) {
+        return false;
+    }
+    do {
+        skip = is_return_char(text->current);
+        text->current += skip;
+    } while (skip != 0);
+    return true;
+}
+
+
+void print_BufferArea(BufferArea area, FILE* out) {
+    for (int i = 0; i < area.size; i++) {
+        fprintf(out, "%02x", area.buffer[i]);
+    }
+}
+
+BufferArea get_hextext(const char* source, int source_len) {
+    struct seeking_text seek_src = {source, source};
+    unsigned char* data_area;
+    int data_len = 0;
+    data_area = malloc(source_len / 2);
+    if (data_area == NULL) {
+        exit(0);
+    }
+    skip_whitespace(&seek_src);
+    skip_return(&seek_src);
+
+    while ((seek_src.current - seek_src.start) < source_len - 2) {
+        int v;
+        int scan_result = sscanf_s(seek_src.current, "%2x", &v);
+        if (scan_result == EOF) break;
+        data_area[data_len] = v;
+        seek_src.current += 2;
+        data_len++;
+        while (true) {
+            if (!skip_whitespace(&seek_src) && !skip_return(&seek_src)) break;
+        }
+    }
+    BufferArea result = {data_area, data_len};
+    return result;
+}
+
+char* loadFile(FILE* file, int* size) {
+    if (file == 0) {
+        fprintf(stderr, "file load err");
+        return 0;
+    }
+    if (fseek(file, 0, SEEK_END) == -1) {
+        fprintf(stderr, "file load err: file cannot seek.");
+        return 0;
+    }
+    *size = ftell(file);
+    if (fseek(file, 0, SEEK_SET) == -1) {
+        fprintf(stderr, "file load err:file cannot seek.");
+        return 0;
+    }
+    char* buf = calloc(1, (*size) + 2);
+    fread(buf, *size, 1, file);
+    fclose(file);
+    if (size == 0 || buf[(*size) - 1] != '\n') {
+        buf[(*size)++] = '\n';
+    }
+    return buf;
+}

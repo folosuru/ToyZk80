@@ -92,25 +92,10 @@ static void append_label_list(int (*append_list)[], int* list_current, int add) 
 
 void disassemble(const char* source, int source_len, struct Command_flags* flags) {
     FILE* out = flags->out;
-    struct seeking_text seek_src = {source, source};
-    unsigned char* data_area;
-    int data_len = 0;
-    data_area = malloc(source_len / 2);
-    if (data_area == NULL) {
-        exit(0);
-    }
-    skip_whitespace(&seek_src);
-    skip_return(&seek_src);
 
-    while ((seek_src.current - seek_src.start) < source_len - 2) {
-        int scan_result = sscanf_s(seek_src.current, "%02x", &data_area[data_len]);
-        if (scan_result == EOF) break;
-        seek_src.current += 2;
-        data_len++;
-        while (true) {
-            if (!skip_whitespace(&seek_src) && !skip_return(&seek_src)) break;
-        }
-    }
+    BufferArea buf = get_hextext(source, source_len);
+    int data_len = buf.size;
+    unsigned char* data_area = buf.buffer;
 
     int seek_pos = 0;
     int program_pos = flags->start_address;

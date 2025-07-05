@@ -7,56 +7,56 @@ void instruction_JP_nn() {
 }
 
 void instruction_JP_NZ_nn() {
-    if (!Context_instance.flags.ZF) {
+    if (!Context_instance.ZF) {
         Context_instance.PC = MemoryManager_WordRead(Context_instance.PC + 1);
     } else {
         Context_instance.PC += 3;
     }
 }
 void instruction_JP_Z_nn() {
-    if (Context_instance.flags.ZF) {
+    if (Context_instance.ZF) {
         Context_instance.PC = MemoryManager_WordRead(Context_instance.PC + 1);
     } else {
         Context_instance.PC += 3;
     }
 }
 void instruction_JP_NC_nn() {
-    if (!Context_instance.flags.CF) {
+    if (!Context_instance.CF) {
         Context_instance.PC = MemoryManager_WordRead(Context_instance.PC + 1);
     } else {
         Context_instance.PC += 3;
     }
 }
 void instruction_JP_C_nn() {
-    if (Context_instance.flags.CF) {
+    if (Context_instance.CF) {
         Context_instance.PC = MemoryManager_WordRead(Context_instance.PC + 1);
     } else {
         Context_instance.PC += 3;
     }
 }
 void instruction_JP_PO_nn() {
-    if (!Context_instance.flags.PV) {
+    if (!Context_instance.PV) {
         Context_instance.PC = MemoryManager_WordRead(Context_instance.PC + 1);
     } else {
         Context_instance.PC += 3;
     }
 }
 void instruction_JP_PE_nn() {
-    if (Context_instance.flags.PV) {
+    if (Context_instance.PV) {
         Context_instance.PC = MemoryManager_WordRead(Context_instance.PC + 1);
     } else {
         Context_instance.PC += 3;
     }
 }
 void instruction_JP_P_nn() {
-    if (!Context_instance.flags.SF) {
+    if (!Context_instance.SF) {
         Context_instance.PC = MemoryManager_WordRead(Context_instance.PC + 1);
     } else {
         Context_instance.PC += 3;
     }
 }
 void instruction_JP_M_nn() {
-    if (Context_instance.flags.SF) {
+    if (Context_instance.SF) {
         Context_instance.PC = MemoryManager_WordRead(Context_instance.PC + 1);
     } else {
         Context_instance.PC += 3;
@@ -66,25 +66,25 @@ void instruction_JR_e() {
     Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1) + 2;
 }
 void instruction_JR_C_e() {
-    if (Context_instance.flags.CF) {
+    if (Context_instance.CF) {
         Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
     }
     Context_instance.PC += 2;
 }
 void instruction_JR_NC_e() {
-    if (!Context_instance.flags.CF) {
+    if (!Context_instance.CF) {
         Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
     }
     Context_instance.PC += 2;
 }
 void instruction_JR_Z_e() {
-    if (Context_instance.flags.ZF) {
+    if (Context_instance.ZF) {
         Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
     }
     Context_instance.PC += 2;
 }
 void instruction_JR_NZ_e() {
-    if (!Context_instance.flags.ZF) {
+    if (!Context_instance.ZF) {
         Context_instance.PC += (int8_t)MemoryManager_ByteRead(Context_instance.PC+1);
     }
     Context_instance.PC += 2;

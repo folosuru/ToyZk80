@@ -298,9 +298,8 @@ static ASM_Opcode* tryCreateOperand(const char* name, int name_len, struct seeki
         text->current++;
         operand_text++;
     }
-
     skip_whitespace(text);
-    if (!skip_return(text) && *text->current != '\0') {
+    if ( ( !skip_return(text) && *text->current != '\0') || *operand_text != '\0') {
         goto wrong_end;
     }
 
@@ -467,10 +466,4 @@ BufferArea assemble(const char* source, struct Command_flags* flag) {
     }
 
     return result;
-}
-
-void print_BufferArea(BufferArea area, FILE* out) {
-    for (int i = 0; i < area.size; i++) {
-        fprintf(out, "%02x", area.buffer[i]);
-    }
 }

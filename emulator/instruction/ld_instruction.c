@@ -150,16 +150,16 @@ void test_instruction_LD() {
     // INSTRUCTION_LD_R_R
     Context_instance.A = 0x00;
     Context_instance.B = 0x20;
-    uint8_t flag = Context_instance.flags.data;
+    uint8_t flag = Context_instance.F;
     check_test_start(instruction_LD_A_B(), Context_instance.A == 0x20);  // set B => A
-    check_test(Context_instance.flags.data == flag);
+    check_test(Context_instance.F == flag);
 
     // LD B, A
     Context_instance.A = 0x25;
     Context_instance.B = 0x00;
-    flag = Context_instance.flags.data;
+    flag = Context_instance.F;
     check_test_start(instruction_LD_B_A(), Context_instance.B == 0x25);  // set A => B
-    check_test(Context_instance.flags.data == flag);                     // flag is not changed
+    check_test(Context_instance.F == flag);                     // flag is not changed
     check_PC_test(1);// flag is not changed
 
     // LD A,n
@@ -167,7 +167,7 @@ void test_instruction_LD() {
     Context_instance.A = 0x00;
     MemoryManager_ByteWrite(0x8000 + 1, 0x23);
     check_test_start(instruction_LD_A_n(), Context_instance.A == 0x23);  // set 0x23 => A
-    check_test(Context_instance.flags.data == flag);                     // flag is not changed
+    check_test(Context_instance.F == flag);                     // flag is not changed
     check_PC_test(2);
 
 
@@ -176,18 +176,18 @@ void test_instruction_LD() {
     Context_instance.HL = 0x8080;
     MemoryManager_ByteWrite(0x8080, 0x28);
     Context_instance.A = 0;
-    flag = Context_instance.flags.data;
+    flag = Context_instance.F;
     check_test_start(instruction_LD_A_HLp(), Context_instance.A == 0x28);
-    check_test(Context_instance.flags.data == flag);
+    check_test(Context_instance.F == flag);
     check_PC_test(1);
 
     // LD (HL), A
     // INSTRUCTION_LD_HLp_R
     Context_instance.HL = 0x8080;
     Context_instance.A = 0x28;
-    flag = Context_instance.flags.data;
+    flag = Context_instance.F;
     check_test_start(instruction_LD_HLp_A(), MemoryManager_ByteRead(0x8080) == 0x28);
-    check_test(Context_instance.flags.data == flag);
+    check_test(Context_instance.F == flag);
     check_PC_test(1);
 
     // INSTRUCTION_LD_RRp_A
@@ -201,9 +201,9 @@ void test_instruction_LD() {
     // INSTRUCTION_LD_RR_nn
     MemoryManager_WordWrite(0x8000 + 1, 0x1234);
     Context_instance.A = 0;
-    flag = Context_instance.flags.data;
+    flag = Context_instance.F;
     check_test_start(instruction_LD_BC_nn(), Context_instance.BC == 0x1234);
-    check_test(Context_instance.flags.data == flag);
+    check_test(Context_instance.F == flag);
     check_PC_test(3);
 
     // INSTRUCTION_LD_RR_nnp

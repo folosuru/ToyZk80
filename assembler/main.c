@@ -66,30 +66,13 @@ int main(int argc, char* argv[]) {
     }
 
     fopen_s(&file, filename, "r");
+    int size;
+    char* buf = loadFile(file, &size);
+
     if (output_name != NULL) {
         fopen_s(&flags.out, output_name, "w");
     } else {
         flags.out = stdout;
-    }
-
-    if (file == 0) {
-        fprintf(stderr, "file load err");
-        return 0;
-    }
-    if (fseek(file, 0, SEEK_END) == -1) {
-        fprintf(stderr, "file load err: file cannot seek.");
-        return 0;
-    }
-    size_t size = ftell(file);
-    if (fseek(file, 0, SEEK_SET) == -1) {
-        fprintf(stderr, "file load err:file cannot seek.");
-        return 0;
-    }
-    char* buf = calloc(1, size + 2);
-    fread(buf, size, 1, file);
-    fclose(file);
-    if (size == 0 || buf[size - 1] != '\n') {
-        buf[size++] = '\n';
     }
 
     if (mode == 0) {

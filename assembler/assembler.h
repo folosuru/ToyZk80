@@ -4,16 +4,7 @@
 #include <stdio.h>
 
 #include "instructions.h"
-
-typedef struct BufferArea_ {
-    unsigned char* buffer;
-    int size;
-} BufferArea;
-
-struct seeking_text {
-    const char* const start;
-    const char* current;
-};
+#include "util/util.h"
 
 struct unresolved_label {
     const char* name;
@@ -40,13 +31,11 @@ struct Command_flags {
     bool show_assemble_address;
 };
 
+
 BufferArea assemble(const char* source, struct Command_flags* flag);
 void disassemble(const char* source, int source_len, struct Command_flags* flag);
 
 int getOpcodeSize(const struct ASM_Instruction* instruction);
-void print_BufferArea(BufferArea area, FILE* out);
-_Bool skip_whitespace(struct seeking_text* text);
-_Bool skip_return(struct seeking_text* text);
 int resolveLabel(struct unresolved_label* find_label, struct defined_label (*definedLabel)[], int definedLabel_count);
 
 #endif  // ASSEMBLER_H

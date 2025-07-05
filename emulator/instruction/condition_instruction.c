@@ -8,10 +8,10 @@ void INSTRUCTION_CP_PROCESS(Byte operand) {
         "setz %2\n\t"                                                                                 \
         "seto %3\n\t"                                                                                 \
         "setc %4\n\t"                                                                                 \
-        : "+r"(Context_instance.A), "=r"(Context_instance.flags.SF), "=r"(Context_instance.flags.ZF), \
-          "=r"(Context_instance.flags.PV), "=r"(Context_instance.flags.CF)                            \
+        : "+r"(Context_instance.A), "=r"(Context_instance.SF), "=r"(Context_instance.ZF), \
+          "=r"(Context_instance.PV), "=r"(Context_instance.CF)                            \
         : "r"(operand));                                                                              \
-    Context_instance.flags.NF = 1;
+    Context_instance.NF = 1;
 }
 
 #define INSTRUCTION_CP_R(R)  \

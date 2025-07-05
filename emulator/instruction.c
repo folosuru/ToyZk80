@@ -10,6 +10,11 @@
 #include "instruction/unimplement_instruction.h"
 #include "instruction/jump_instruction.h"
 #include "instruction/stack_instruction.h"
+#include "instruction/call_instruction.h"
+
+
+#include <synchapi.h>
+
 
 #ifdef DEBUG
 const char* last_test_instruction;
@@ -21,19 +26,24 @@ const char* last_test_instruction;
  **/
 
 void instruction_NOP() {
+    if (!(Context_instance.R & 0xFF)){
+        print_register_window();
+        //Sleep(1);
+    }
     Context_instance.PC++;
 }
 
 void instruction_HALT() {
-    mvaddstr(24, 5, "program halted.");
-    getch();
+    print_register_window();
+    mvwaddstr(register_window, 0, 0, "program halted.");
+    wrefresh(register_window);
+    wgetch(register_window);
     exit(0);
 }
 
 
 InstructionPtrTable InstructionTable() {
     // instruction list
-
     static const InstructionPtr table[256] = {
 instruction_NOP,           instruction_LD_BC_nn,   instruction_LD_BCp_A,  instruction_INC_BC,
 instruction_INC_B,         instruction_DEC_B,      instruction_LD_B_n,    instruction_RLCA,

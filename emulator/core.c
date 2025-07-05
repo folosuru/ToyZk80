@@ -1,3 +1,4 @@
+
 #include <synchapi.h>
 #include <unistd.h>
 
@@ -6,20 +7,16 @@
 
 void  init_emulator() {
     Context_instance.PC = 0x8000;
+    Context_instance.SP = 0x81ff;
     return;
 }
 
 _Noreturn void mainloop() {
     InstructionPtrTable table = InstructionTable();
     while (true) {
-        if (!(Context_instance.R & 0xFF)) Sleep(1);
         (*(*table)[MemoryManager_ByteRead(Context_instance.PC)])();
         Context_instance.R++;
-        /* mvprintw(24, 5, "register:\n"
-                   "B: %02x, C: %02x, D: %02x, E: %02x, H: %02x, L: %02x, A: %02x, ",
-                   Context_instance.B, Context_instance.C, Context_instance.D, Context_instance.E, Context_instance.H,
-                   Context_instance.L, Context_instance.A);
-        refresh();*/
+        print_register_window();
     }
 }
 
@@ -54,7 +51,7 @@ void MemoryManager_ByteWrite(EmulatorPtr ptr, Byte data) {
         if (0x83f8 <= ptr && ptr <= 0x83ff) {
             *(Byte*)(&Memory_instance.Display[ptr - 0x83f8]) = data;
             UpdateDisplay(ptr - 0x83f8);
-            refresh();
+            wrefresh(LED_window);
             return;
         }
     }
@@ -70,7 +67,7 @@ void MemoryManager_WordWrite(EmulatorPtr ptr, Word data) {
             *(Word*)(&Memory_instance.Display[ptr - 0x83f8]) = data;
             UpdateDisplay(ptr - 0x83f8);
             UpdateDisplay(ptr - 0x83f8 + 1);
-            refresh();
+            wrefresh(LED_window);
             return;
         }
     }
