@@ -6,15 +6,16 @@
 
 
 WINDOW * LED_window;
-WINDOW * register_window;
-
+WINDOW * information_window;
+WINDOW * status_window;
+WINDOW * control_window;
+enum running_status running_operation_status;
 void init_display() {
-
     initscr();
     noecho();
     cbreak();
     curs_set(0);
-    LED_window = newwin(10, 70, 0, 0);
+    LED_window = newwin(9, 70, 0, 0);
     start_color();
     init_pair(5, COLOR_WHITE, -1);
     use_default_colors();
@@ -26,9 +27,21 @@ void init_display() {
     init_pair(4, COLOR_GREEN, COLOR_GREEN);
     wbkgd(LED_window, COLOR_PAIR(4));
 
-    register_window = newwin(8, 70, 12, 0);
-    wbkgd(register_window, COLOR_PAIR(3));
-    wrefresh(register_window);
+    status_window = newwin(1, 70, 9, 0);
+    wbkgd(status_window, COLOR_PAIR(3));
+    wrefresh(status_window);
+
+    information_window = newwin(7, 70, 11, 0);
+    wbkgd(information_window, COLOR_PAIR(-1));
+    nodelay(information_window, true);
+    keypad(information_window, true);
+
+    control_window = newwin(1, 70, LINES-1, 0);
+    wbkgd(control_window, COLOR_PAIR(3));
+    print_control_window();
+    wrefresh(control_window);
+
+    wrefresh(information_window);
     wrefresh(LED_window);
 }
 
@@ -79,17 +92,17 @@ void UpdateDisplay(int digit) {
 }
 
 int AccessViolation(EmulatorPtr ptr) {
-    char buf[512];
-    attron(COLOR_PAIR(1));
-    sprintf(buf, "Access Violation Occur at %llx.", ptr);
-    mvaddstr(20, 5, buf);
-    mvprintw(24, 5, "PC: %x", Context_instance.PC);
-    getch();
-    exit(2);
+    print_register_window();
+    running_operation_status = status_violation;
+    wattr_on(status_window, COLOR_PAIR(1), NULL);
+    mvwprintw(status_window, 0, 0, "Access Violation Occur: Access to %llx.", ptr);
+    wrefresh(status_window);
+    print_control_window();
+    while (wgetch(status_window) != 'q') {}
+    exit(1);
 }
 void print_register_window() {
-
-        mvwprintw(register_window, 0, 0,
+        mvwprintw(information_window, 0, 0,
                  "registers info:\n"
                  "B: %02x, C: %02x, D: %02x, E: %02x, H: %02x, L: %02x, A: %02x, \n"
                  "BC: %04x, DE: %04x, HL: %04x, AF: %04x, \n"
@@ -103,5 +116,17 @@ void print_register_window() {
                  Context_instance.SP, Context_instance.PC,
                  Context_instance.SF, Context_instance.ZF, Context_instance.HC,
                  Context_instance.PV, Context_instance.NF, Context_instance.CF);
-        wrefresh(register_window);
+        wrefresh(information_window);
+}
+
+void print_control_window() {
+    werase(control_window);
+    if (running_operation_status == status_run) {
+        mvwaddstr(control_window, 0, 0, "[Spc] Pause");
+    } else if (running_operation_status == status_pause){
+        mvwaddstr(control_window, 0, 0, "[Spc] Resume    [q] Quit");
+    } else if (running_operation_status == status_violation || running_operation_status == status_halt) {
+        mvwaddstr(control_window, 0, 0, "[q] Quit");
+    }
+    wrefresh(control_window);
 }

@@ -22,22 +22,22 @@ const char* last_test_instruction;
 
 /**
  * Implement of Z80 instruction.
- *
  **/
 
 void instruction_NOP() {
     if (!(Context_instance.R & 0xFF)){
+        if (wgetch(information_window) == ' ') Sleep(1000);
         print_register_window();
-        //Sleep(1);
+        Sleep(1);
     }
     Context_instance.PC++;
 }
 
 void instruction_HALT() {
     print_register_window();
-    mvwaddstr(register_window, 0, 0, "program halted.");
-    wrefresh(register_window);
-    wgetch(register_window);
+    mvwaddstr(status_window, 0, 0, "program halted.");
+    wrefresh(status_window);
+    wgetch(status_window);
     exit(0);
 }
 

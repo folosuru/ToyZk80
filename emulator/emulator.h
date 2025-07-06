@@ -87,6 +87,7 @@ extern struct Context Context_instance;
 extern struct Memory Memory_instance;
 
 _Noreturn void mainloop();
+void run_loop(const InstructionPtrTable table);
 
 void  init_emulator();
 
@@ -99,10 +100,21 @@ void UpdateDisplay(int digit);
 
 int AccessViolation(EmulatorPtr);
 
+enum running_status {
+    status_run,
+    status_pause,
+    status_violation,
+    status_halt
+};;
+
+extern enum running_status running_operation_status;
 extern WINDOW * LED_window;
-extern WINDOW * register_window;
+extern WINDOW * information_window;
+extern WINDOW * status_window;
+extern WINDOW * control_window;
 void init_display();
 void print_register_window();
+void print_control_window();
 
 #ifdef DEBUG
 void test_instruction();
