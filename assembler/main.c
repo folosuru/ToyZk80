@@ -85,6 +85,6 @@ int main(int argc, char* argv[]) {
 
 void print_help() {
     printf(
-        "ToyTk80_asm - assembler\n"
-        "Usage: ToyTk80_asm input [-o output_file] [-start start_address] [--assemble] [--disassemble] [--label]\n");
+        "ToyZk80_asm - assembler\n"
+        "Usage: ToyZk80_asm input [-o output_file] [-start start_address] [--assemble] [--disassemble] [--label]\n");
 }

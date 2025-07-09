@@ -43,7 +43,7 @@ add_dependencies(pdcurses pdcurses_build)
 
 # --- End PDCurses Integration ---
 
-add_executable(ToyTk80_emu
+add_executable(ToyZk80_emu
         main.c
         core.c
         display.c
@@ -62,14 +62,14 @@ add_executable(ToyTk80_emu
 # Link the PDCurses library to the emulator.
 # This will also add the necessary include directory (${PDCURSES_DIR})
 # because it's specified in the 'pdcurses' IMPORTED target.
-target_link_libraries(ToyTk80_emu PRIVATE pdcurses)
+target_link_libraries(ToyZk80_emu PRIVATE pdcurses)
 
-target_compile_options(ToyTk80_emu
+target_compile_options(ToyZk80_emu
         PRIVATE -masm=intel -O3
 )
-target_compile_definitions(ToyTk80_emu
+target_compile_definitions(ToyZk80_emu
         PRIVATE
         $<$<CONFIG:Debug>:DEBUG>
 )
-target_include_directories(ToyTk80_emu PRIVATE ../)
-target_link_libraries(ToyTk80_emu PRIVATE ToyTk80_util)
+target_include_directories(ToyZk80_emu PRIVATE ../)
+target_link_libraries(ToyZk80_emu PRIVATE ToyZk80_util)

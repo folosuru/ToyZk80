@@ -1,10 +1,10 @@
-tk80のアセンブラとかだよ。たのしいね。
+Zk80のアセンブラとかだよ。たのしいね。
 
 ## アセンブラ
 Z80のアセンブラ/逆アセンブラとなっております.
 `;`以降はコメントになります。
 ```
-ToyTk80_asm [入力ファイル] -o [出力ファイル]
+ToyZk80_asm [入力ファイル] -o [出力ファイル]
 ```
 出力が指定されていないときは標準出力に出る。
 
@@ -32,7 +32,7 @@ HALT
 ```
 このコマンドを実行することで
 ```sh
-ToyTk80_asm ./in.asm -o ./out.hex
+ToyZk80_asm ./in.asm -o ./out.hex
 ```
 
 `out.hex`にこう出力される
@@ -54,7 +54,7 @@ ToyTk80_asm ./in.asm -o ./out.hex
 
 このコマンドを実行することで
 ```sh
-ToyTk80_asm ./in.hex -o ./out.asm --disassemble
+ToyZk80_asm ./in.hex -o ./out.asm --disassemble
 ```
 こう出力される。
 ```asm
@@ -114,7 +114,7 @@ JP LABEL_0
 <summary>表示例</summary>
 
 ```sh
-$ ToyTk80_asm.exe --disassemble .\in.bin --address
+$ ToyZk80_asm.exe --disassemble .\in.bin --address
 0x8000 |     LD A,00H
 0x8002 |     LD B,0aH
 0x8004 | LABEL_0: 

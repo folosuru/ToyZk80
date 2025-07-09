@@ -1,5 +1,5 @@
-#ifndef TOYTK80_MATH_INSTRUCTION_H
-#define TOYTK80_MATH_INSTRUCTION_H
+#ifndef TOYZK80EMU_MATH_INSTRUCTION_H
+#define TOYZK80EMU_MATH_INSTRUCTION_H
 
 
 #define INSTRUCTION_ADD_A_R(add_register) void instruction_ADD_A_##add_register();
@@ -66,4 +66,4 @@ DEFINE_MATH_INSTRUCTION_RR(SP)
 #ifdef DEBUG
 void test_instruction_math();
 #endif
-#endif  // TOYTK80_MATH_INSTRUCTION_H
+#endif  // TOYZK80EMU_MATH_INSTRUCTION_H

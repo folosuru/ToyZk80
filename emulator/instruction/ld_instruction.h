@@ -1,5 +1,5 @@
-#ifndef TOYTK80_LD_INSTRUCTION_H
-#define TOYTK80_LD_INSTRUCTION_H
+#ifndef TOYZK80EMU_LD_INSTRUCTION_H
+#define TOYZK80EMU_LD_INSTRUCTION_H
 
 #define INSTRUCTION_LD_R_R(left, right) void instruction_LD_##left##_##right();
 #define INSTRUCTION_LD_R_N(left) void instruction_LD_##left##_##n();
@@ -70,4 +70,4 @@ void instruction_EXX();
 void test_instruction_LD();
 #endif
 
-#endif  // TOYTK80_LD_INSTRUCTION_H
+#endif  // TOYZK80EMU_LD_INSTRUCTION_H

@@ -1,5 +1,5 @@
-#ifndef ASSEMBLER_H
-#define ASSEMBLER_H
+#ifndef TOYZK80ASM_ASSEMBLER_H
+#define TOYZK80ASM_ASSEMBLER_H
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -38,4 +38,4 @@ void disassemble(const char* source, int source_len, struct Command_flags* flag)
 int getOpcodeSize(const struct ASM_Instruction* instruction);
 int resolveLabel(struct unresolved_label* find_label, struct defined_label (*definedLabel)[], int definedLabel_count);
 
-#endif  // ASSEMBLER_H
+#endif  // TOYZK80ASM_ASSEMBLER_H

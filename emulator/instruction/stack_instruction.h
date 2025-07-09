@@ -1,5 +1,5 @@
-#ifndef TOYTK80_STACK_INSTRUCTION_H
-#define TOYTK80_STACK_INSTRUCTION_H
+#ifndef TOYZK80EMU_STACK_INSTRUCTION_H
+#define TOYZK80EMU_STACK_INSTRUCTION_H
 
 void instruction_PUSH_BC();
 void instruction_PUSH_DE();
@@ -13,4 +13,4 @@ void instruction_POP_AF();
 #ifdef DEBUG
 void test_instruction_stack();
 #endif
-#endif  // TOYTK80_STACK_INSTRUCTION_H
+#endif  // TOYZK80EMU_STACK_INSTRUCTION_H

@@ -1,5 +1,5 @@
-#ifndef TOYTK80_INSTRUCTIO_TEST_UTIL_H
-#define TOYTK80_INSTRUCTIO_TEST_UTIL_H
+#ifndef TOYZK80_INSTRUCTION_TEST_UTIL_H
+#define TOYZK80_INSTRUCTION_TEST_UTIL_H
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -32,4 +32,4 @@ extern const char* last_test_instruction;
     } while (0)
 #endif  // DEBUG
 
-#endif  // TOYTK80_INSTRUCTIO_TEST_UTIL_H
+#endif  // TOYZK80_INSTRUCTION_TEST_UTIL_H

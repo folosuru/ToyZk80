@@ -1,5 +1,5 @@
-#ifndef TOYTK80_UTIL_H
-#define TOYTK80_UTIL_H
+#ifndef TOYZK80_UTIL_H
+#define TOYZK80_UTIL_H
 #include <stdio.h>
 typedef struct BufferArea_ {
     unsigned char* buffer;
@@ -16,4 +16,4 @@ _Bool skip_whitespace(struct seeking_text* text);
 _Bool skip_return(struct seeking_text* text);
 BufferArea get_hextext(const char* text, int len);
 char* loadFile(FILE* file, int* size);
-#endif  // TOYTK80_UTIL_H
+#endif  // TOYZK80_UTIL_H

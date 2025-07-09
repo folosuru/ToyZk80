@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TOYTK80_EMULATOR_H
-#define TOYTK80_EMULATOR_H
+#ifndef TOYZK80_EMULATOR_H
+#define TOYZK80_EMULATOR_H
 
 #include <stdint.h>
 #include <curses.h>
@@ -120,4 +120,4 @@ void print_control_window();
 void test_instruction();
 #endif
 
-#endif //TOYTK80_EMULATOR_H
+#endif // TOYZK80_EMULATOR_H

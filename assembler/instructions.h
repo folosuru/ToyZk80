@@ -1,5 +1,5 @@
-#ifndef INSTRUCTIONS_H
-#define INSTRUCTIONS_H
+#ifndef TOYZK80ASM_INSTRUCTIONS_H
+#define TOYZK80ASM_INSTRUCTIONS_H
 
 enum OperandData_Type {
     data_none,
@@ -59,4 +59,4 @@ typedef struct {
     int data_len;
 } ASM_Opcode;
 
-#endif  // INSTRUCTIONS_H
+#endif  // TOYZK80ASM_INSTRUCTIONS_H

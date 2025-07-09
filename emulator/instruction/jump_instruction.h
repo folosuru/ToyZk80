@@ -1,5 +1,5 @@
-#ifndef DEFINE_JUMP_INSTRUCTION
-#define DEFINE_JUMP_INSTRUCTION
+#ifndef TOYZK80EMU_JUMP_INSTRUCTION_H
+#define TOYZK80EMU_JUMP_INSTRUCTION_H
 
 void instruction_JP_nn();
 void instruction_JP_NZ_nn();
@@ -23,4 +23,4 @@ void instruction_DJNZ_e();
 void test_instruction_jump();
 #endif
 
-#endif  // DEFINE_JUMP_INSTRUCTION
+#endif  // TOYZK80EMU_JUMP_INSTRUCTION_H
