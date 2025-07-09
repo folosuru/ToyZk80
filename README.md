@@ -75,6 +75,7 @@ LABEL_0:
 長くなってきたので[別のファイル](doc/assembler.md)に移動しました。
 
 ## エミュレータ
+![動作イメージ](doc/emu_rec.gif)
 16進数が書かれている`out.hex`ファイルの内容を解釈して実行する。
 ```sh
 ./ToyZk80_emu
