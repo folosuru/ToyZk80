@@ -9,7 +9,9 @@ struct Memory Memory_instance;
 struct Context Context_instance;
 
 int main(int argc, char *argv[]) {
+#ifdef DEBUG
     test_instruction();
+#endif  // DEBUG
     FILE* file;
     fopen_s(&file, "out.hex", "r");
     int size;
