@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "instructions.h"
+#include "instruction/instructions.h"
 #include "util/util.h"
 
 struct unresolved_label {
@@ -35,7 +35,6 @@ struct Command_flags {
 BufferArea assemble(const char* source, struct Command_flags* flag);
 void disassemble(const char* source, int source_len, struct Command_flags* flag);
 
-int getOpcodeSize(const struct ASM_Instruction* instruction);
 int resolveLabel(struct unresolved_label* find_label, struct defined_label (*definedLabel)[], int definedLabel_count);
 
 #endif  // TOYZK80ASM_ASSEMBLER_H

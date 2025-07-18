@@ -5,7 +5,6 @@
 #include "curses.h"
 #include "emulator.h"
 
-void setStatus(enum running_status);
 
 void init_emulator() {
     Context_instance.PC = 0x8000;
@@ -19,6 +18,7 @@ _Noreturn void mainloop() {
     running_operation_status = status_run;
     mvwaddstr(status_window, 0, 0, "program running");
     wrefresh(status_window);
+    print_register_window();
     while (true) {
         setStatus(status_pause);
 
@@ -27,6 +27,11 @@ _Noreturn void mainloop() {
             if (op == ' ') {
                 setStatus(status_run);
                 run_loop(table);
+                break;
+            }
+            if (op == 's') {
+                setStatus(status_step);
+                step_run(table);
                 break;
             }
             if (op == 'q') {
@@ -54,6 +59,30 @@ void run_loop(const InstructionPtrTable table) {
     }
 }
 
+void step_run(const InstructionPtrTable table) {
+    while (true) {
+        while (true) {
+            int ch = wgetch(status_window);
+            if (ch == 's') {
+                return;
+            }
+            if (ch == ' ') {
+                break;
+            }
+        }
+        Byte current_PC = MemoryManager_ByteRead(Context_instance.PC);
+        if (current_PC == 0x00) {  // NOP
+            Context_instance.PC++;
+        } else {
+            (*(*table)[current_PC])();
+        }
+        Context_instance.R++;
+
+        print_register_window();
+        print_instruction_window();
+    }
+}
+
 void setStatus(const enum running_status new_stat) {
     running_operation_status = new_stat;
     switch (running_operation_status) {
@@ -66,6 +95,9 @@ void setStatus(const enum running_status new_stat) {
         case status_violation:
             break;
         case status_halt:
+            break;
+        case status_step:
+            mvwaddstr(status_window, 0, 0, "Step Execution Mode");
             break;
     }
     print_control_window();

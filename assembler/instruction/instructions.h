@@ -1,6 +1,6 @@
 #ifndef TOYZK80ASM_INSTRUCTIONS_H
 #define TOYZK80ASM_INSTRUCTIONS_H
-
+#include <stdbool.h>
 enum OperandData_Type {
     data_none,
     data_n,
@@ -59,4 +59,7 @@ typedef struct {
     int data_len;
 } ASM_Opcode;
 
+int getOpcodeSize(const struct ASM_Instruction* instruction);
+bool find_instruction_by_code(const unsigned char* data_start, int* data_pos, int data_len, ASM_Opcode* result);
+void Opcode_to_ASM_str(ASM_Opcode* opcode, char* buffer, int buffer_len);
 #endif  // TOYZK80ASM_INSTRUCTIONS_H

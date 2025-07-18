@@ -2,13 +2,14 @@
 #include <stdlib.h>
 
 #include "emulator.h"
-
+#include "assembler/instruction/instructions.h"
 
 
 WINDOW * LED_window;
 WINDOW * information_window;
 WINDOW * status_window;
 WINDOW * control_window;
+WINDOW * instruction_window;
 enum running_status running_operation_status;
 void init_display() {
     initscr();
@@ -40,6 +41,10 @@ void init_display() {
     wbkgd(control_window, COLOR_PAIR(3));
     print_control_window();
     wrefresh(control_window);
+
+    instruction_window = newwin(4, 70, 19, 0);
+    wbkgd(instruction_window, COLOR_PAIR(3));
+    wrefresh(instruction_window);
 
     wrefresh(information_window);
     wrefresh(LED_window);
@@ -124,9 +129,31 @@ void print_control_window() {
     if (running_operation_status == status_run) {
         mvwaddstr(control_window, 0, 0, "[Spc] Pause");
     } else if (running_operation_status == status_pause){
-        mvwaddstr(control_window, 0, 0, "[Spc] Resume    [q] Quit");
+        mvwaddstr(control_window, 0, 0, "[Spc] Resume    [q] Quit  [s] Step Execute");
     } else if (running_operation_status == status_violation || running_operation_status == status_halt) {
         mvwaddstr(control_window, 0, 0, "[q] Quit");
+    } else if (running_operation_status == status_step) {
+        mvwaddstr(control_window, 0, 0, "[Spc] Next    [s] Exit Step Execute");
     }
     wrefresh(control_window);
+}
+
+void print_instruction_window() {
+    char buf[128];
+    ASM_Opcode instruction;
+    int pos = Context_instance.PC - 0x8000;
+    int before_pos = pos;
+    wclear(instruction_window);
+    find_instruction_by_code(Memory_instance.program, &pos, 10, &instruction);
+    Opcode_to_ASM_str(&instruction, buf, 128);
+    mvwprintw(instruction_window, 0,0, "> %04x | %s", before_pos + 0x8000,  buf);
+    before_pos = pos;
+
+    for (int i=1; i < 4; i++) {
+        find_instruction_by_code(Memory_instance.program, &pos, 64, &instruction);
+        Opcode_to_ASM_str(&instruction, buf, 128);
+        mvwprintw(instruction_window, i,0, "  %04x | %s", before_pos + 0x8000,  buf);
+        before_pos = pos;
+    }
+    wrefresh(instruction_window);
 }

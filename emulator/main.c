@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
     memcpy(Memory_instance.program, buffer.buffer, buffer.size);
     init_display();
     init_emulator();
+    print_instruction_window();
     for (int i=0; i < 8; i++) UpdateDisplay(i);
     wrefresh(LED_window);
     mainloop();

@@ -35,9 +35,9 @@ void instruction_NOP() {
 
 void instruction_HALT() {
     print_register_window();
-    mvwaddstr(status_window, 0, 0, "program halted.");
+    setStatus(status_halt);
     wrefresh(status_window);
-    wgetch(status_window);
+    while(wgetch(status_window) != 'q') ;
     exit(0);
 }
 

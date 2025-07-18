@@ -88,6 +88,7 @@ extern struct Memory Memory_instance;
 
 _Noreturn void mainloop();
 void run_loop(const InstructionPtrTable table);
+void step_run(const InstructionPtrTable table);
 
 void  init_emulator();
 
@@ -104,17 +105,21 @@ enum running_status {
     status_run,
     status_pause,
     status_violation,
-    status_halt
-};;
+    status_halt,
+    status_step
+};
+void setStatus(enum running_status);
 
 extern enum running_status running_operation_status;
 extern WINDOW * LED_window;
 extern WINDOW * information_window;
 extern WINDOW * status_window;
 extern WINDOW * control_window;
+extern WINDOW * instruction_window;
 void init_display();
 void print_register_window();
 void print_control_window();
+void print_instruction_window();
 
 #ifdef DEBUG
 void test_instruction();

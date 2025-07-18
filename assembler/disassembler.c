@@ -2,79 +2,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "assembler.h"
-#include "instructions.h"
 
 #define ARRAY_SIZEOF(arr) sizeof(arr) / sizeof(arr[0])
-
-bool read_operand_code(const unsigned char* data_start, int* data_pos, int data_len, ASM_Opcode* result) {
-    const struct ASM_Instruction* instruction = result->instruction;
-
-    int start_data_pos = *data_pos;
-    for (int i = 0; i < ARRAY_SIZEOF(instruction->data); i++) {
-        if (instruction->data[i] == data_none) {
-            break;
-        }
-        if (data_len <= *data_pos) {
-            *data_pos = start_data_pos;
-            return false;
-        }
-
-        result->data_len++;
-        if (instruction->data[i] == data_n) {
-            result->data[i].type = Opcode_data_1byte;
-            result->data[i].data = *(data_start + (*data_pos));
-            (*data_pos)++;
-        } else if (instruction->data[i] == data_nn) {
-            if (data_len <= (*data_pos) + 1) {
-                *data_pos = start_data_pos;
-                return false;
-            }
-
-            result->data[i].type = Opcode_data_2byte;
-            result->data[i].data = *(data_start + (*data_pos)) | (*(data_start + (*data_pos + 1)) << 8);
-            (*data_pos) += 2;
-
-        } else if (instruction->data[i] == data_e) {
-            result->data[i].type = Opcode_data_offset;
-            result->data[i].s1bit_data = *(signed char*)(data_start + (*data_pos));
-            (*data_pos)++;
-        }
-    }
-    return true;
-}
-
-void find_instruction_by_code(const unsigned char* data_start, int* data_pos, int data_len, ASM_Opcode* result) {
-    int pos_start = *data_pos;
-    for (int i = 0; i < ASM_Instructions_count; i++) {
-        struct ASM_Instruction* instruction = &ASM_instructions[i];
-
-        if (instruction->OpCode[0] != *(data_start + (*data_pos))) {
-            continue;
-        }
-        *data_pos = pos_start;
-
-        (*data_pos)++;
-        bool do_continue = false;
-        for (int j = 1; j < instruction->OpCodeCount; j++) {
-            if ((*data_pos) == data_len || instruction->OpCode[j] != *(data_start + (*data_pos))) {
-                do_continue = true;
-                break;
-            }
-            (*data_pos)++;
-        }
-        if (do_continue) {
-            continue;
-        }
-        result->instruction = &ASM_instructions[i];
-        if (read_operand_code(data_start, data_pos, data_len, result)) {
-            return;
-        }
-    }
-    fprintf(stderr, "?????");
-    *data_pos = pos_start;
-}
 
 static int compare_int(const void* a, const void* b) {
     return *(int*)a - *(int*)b;

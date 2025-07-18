@@ -72,4 +72,4 @@ target_compile_definitions(ToyZk80_emu
         $<$<CONFIG:Debug>:DEBUG>
 )
 target_include_directories(ToyZk80_emu PRIVATE ../)
-target_link_libraries(ToyZk80_emu PRIVATE ToyZk80_util)
+target_link_libraries(ToyZk80_emu PRIVATE ToyZk80_util ToyZk80_instruction)
