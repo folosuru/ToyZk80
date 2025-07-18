@@ -70,10 +70,11 @@ static enum is_hex_result is_hex_char(char c) {
 
 static bool parse_hex_char(const char* c1, const char* c2, unsigned char* result) {
     enum is_hex_result c1_result = is_hex_char(*c1);
+    *result = 0;
     if (c1_result == hex_char_number) {
-        *result |= (*c1 - '0') << 7;
+        *result |= (*c1 - '0') << 4;
     } else if (c1_result == hex_char_alpha) {
-        *result |= (tolower(*c1) - 'a' +10) << 7;
+        *result |= (tolower(*c1) - 'a' +10) << 4;
     } else {
         return false;
     }
